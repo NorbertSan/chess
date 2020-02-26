@@ -76,10 +76,17 @@ class App extends React.Component {
     return board;
   }
 
+  handleClickBoard(e) {
+    console.log(e.target);
+  }
+
   render() {
     return (
       <>
-        <Board board={this.state.board} />
+        <Board
+          onClick={e => this.handleClickBoard(e)}
+          board={this.state.board}
+        />
       </>
     );
   }
