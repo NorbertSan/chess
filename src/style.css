@@ -3,5 +3,61 @@ body {
           box-sizing: border-box;
   margin: 0;
   padding: 0;
+  height: 100vh;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  background: #ddd;
+}
+
+.board {
+  display: -ms-grid;
+  display: grid;
+  border: 2px solid rgba(0, 0, 0, 0.4);
+  -ms-grid-columns: (1fr)[8];
+      grid-template-columns: repeat(8, 1fr);
+  grid-row: auto;
+  background: #eee;
+}
+
+.square {
+  width: 75px;
+  height: 75px;
+  border: 1px solid #ddd;
+  cursor: pointer;
+}
+
+.king {
+  background: orange;
+}
+
+.queen {
+  background: salmon;
+}
+
+.rook {
+  background: pink;
+}
+
+.bishop {
+  background: blue;
+}
+
+.knight {
+  background: REd;
+}
+
+.pawn {
+  background: yellow;
+}
+
+.player1 {
+  opacity: 0.5;
 }
 /*# sourceMappingURL=style.css.map */

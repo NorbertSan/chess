@@ -2,4 +2,47 @@ body {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ddd;
+}
+.board {
+  display: grid;
+  //   width: 90vw;
+  //   height: 90vh;
+  border: 2px solid rgba(0, 0, 0, 0.4);
+  grid-template-columns: repeat(8, 1fr);
+  grid-row: auto;
+  background: #eee;
+}
+.square {
+  width: 75px;
+  height: 75px;
+  border: 1px solid #ddd;
+  cursor: pointer;
+}
+.king {
+  background: orange;
+}
+.queen {
+  background: salmon;
+}
+.rook {
+  background: pink;
+}
+.bishop {
+  background: blue;
+}
+.knight {
+  background: REd;
+}
+.pawn {
+  background: yellow;
+}
+.player1 {
+  opacity: 0.5;
+}
+.player2 {
 }
