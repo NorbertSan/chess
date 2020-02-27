@@ -1,6 +1,6 @@
 body {
   -webkit-box-sizing: border-box;
-          box-sizing: border-box;
+  box-sizing: border-box;
   margin: 0;
   padding: 0;
   height: 100vh;
@@ -8,11 +8,11 @@ body {
   display: -ms-flexbox;
   display: flex;
   -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
   -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
   background: #ddd;
 }
 
@@ -21,7 +21,7 @@ body {
   display: grid;
   border: 2px solid rgba(0, 0, 0, 0.4);
   -ms-grid-columns: (1fr)[8];
-      grid-template-columns: repeat(8, 1fr);
+  grid-template-columns: repeat(8, 1fr);
   grid-row: auto;
   background: #eee;
 }
@@ -60,4 +60,5 @@ body {
 .player1 {
   opacity: 0.5;
 }
+
 /*# sourceMappingURL=style.css.map */
