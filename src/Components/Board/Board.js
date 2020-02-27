@@ -20,6 +20,14 @@ class Board extends React.Component {
     return <div key={nr} id={nr} className={classNamesList}></div>;
   }
 
+  addClassName(squares, index, className) {
+    const id = squares[index].props.id;
+    const classNames = squares[index].props.className.split(" ");
+    classNames.push(className);
+    const squareHTML = this.returnSquare(id, ...classNames);
+    squares[index] = squareHTML;
+  }
+
   displaySquares(squares) {
     const { board } = this.props;
     const player1PawnsValues = Object.values(player1PawnsIndexes);
@@ -50,11 +58,15 @@ class Board extends React.Component {
   displayClickedSquare(squares) {
     const { clicked } = this.props;
     if (clicked) {
-      const id = squares[clicked].props.id;
-      const classNames = squares[clicked].props.className.split(" ");
-      classNames.push("clicked");
-      const squareHTML = this.returnSquare(id, ...classNames);
-      squares[clicked] = squareHTML;
+      this.addClassName(squares, clicked, "clicked");
+    }
+  }
+  displayPossibilityMoves(squares) {
+    const { possibilityMoves } = this.props;
+    if (possibilityMoves.length > 0) {
+      possibilityMoves.forEach((item, index) => {
+        this.addClassName(squares, possibilityMoves[index], "posibbilityMove");
+      });
     }
   }
   upgradeSquares(squares) {
@@ -69,6 +81,7 @@ class Board extends React.Component {
     let squares = [];
     await this.displaySquares(squares);
     await this.displayClickedSquare(squares);
+    await this.displayPossibilityMoves(squares);
 
     this.upgradeSquares(squares);
   }
