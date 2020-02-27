@@ -1,6 +1,5 @@
 import React from "react";
 import {
-  size,
   player1PawnsIndexes,
   player2PawnsIndexes,
   freeSpace
@@ -24,6 +23,8 @@ class Board extends React.Component {
     const id = squares[index].props.id;
     const classNames = squares[index].props.className.split(" ");
     classNames.push(className);
+    classNames.shift();
+    // remove first class, its always 'square', prevent for multiple classNamesquare
     const squareHTML = this.returnSquare(id, ...classNames);
     squares[index] = squareHTML;
   }

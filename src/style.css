@@ -31,30 +31,86 @@ body {
   height: 75px;
   border: 1px solid #ddd;
   cursor: pointer;
+  position: relative;
+  font-weight: bold;
 }
 
 .king {
   background: orange;
 }
 
+.king::after {
+  content: "king";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
 .queen {
   background: salmon;
+}
+
+.queen::after {
+  content: "queen";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
 }
 
 .rook {
   background: pink;
 }
 
+.rook::after {
+  content: "rook";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
 .bishop {
   background: blue;
+}
+
+.bishop::after {
+  content: "bishop";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
 }
 
 .knight {
   background: REd;
 }
 
+.knight::after {
+  content: "knight";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
 .pawn {
   background: yellow;
+}
+
+.pawn::after {
+  content: "pawn";
+  position: absolute;
+  top: 0%;
+  left: 0%;
+  width: 100%;
+  height: 100%;
 }
 
 .player1 {
@@ -63,9 +119,16 @@ body {
 
 .posibbilityMove {
   background: black !important;
+  opacity: 1;
 }
 
-.clicked {
-  border: 2px dashed black;
+.clicked::after {
+  content: "clicked";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  font-size: 20px;
 }
 /*# sourceMappingURL=style.css.map */

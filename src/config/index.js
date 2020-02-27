@@ -19,8 +19,6 @@ export const player2Pawns = {
   pawn: 8
 };
 
-export const freeSpace = 0;
-
 export const player1PawnsIndexes = {
   king: 1,
   queen: 2,
@@ -38,3 +36,5 @@ export const player2PawnsIndexes = {
   knight: 15,
   pawn: 16
 };
+
+export const freeSpace = 0;
