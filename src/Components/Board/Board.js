@@ -11,12 +11,17 @@ class Board extends React.Component {
     squares: []
   };
 
-  componentDidUpdate() {
+  returnSquare(nr, ...classNames) {
+    const classNamesList = classNames.reduce((res, cur) => {
+      if (cur) {
+        return `${res} ${cur}`;
+      }
+    }, "square");
+    return <div key={nr} id={nr} className={classNamesList}></div>;
+  }
+
+  displaySquares(squares) {
     const { board } = this.props;
-    let squares = [];
-    const returnSquare = (figure = "", player = "", nr) => (
-      <div key={nr} id={nr} className={`square ${figure} ${player}`}></div>
-    );
     const player1PawnsValues = Object.values(player1PawnsIndexes);
     const player2PawnsValues = Object.values(player2PawnsIndexes);
     const player1PawnsKeys = Object.keys(player1PawnsIndexes);
@@ -29,19 +34,30 @@ class Board extends React.Component {
       if (index > -1) {
         // player1 pawn
         figure = player1PawnsKeys[index];
-        squareHTML = returnSquare(figure, "player1", nr);
-        //   squareHTML = returnSquare();
+        squareHTML = this.returnSquare(nr, figure, "player1");
       } else if (index2 > -1) {
         // player2 pawn
         figure = player2PawnsKeys[index2];
-        squareHTML = returnSquare(figure, "player2", nr);
+        squareHTML = this.returnSquare(nr, figure, "player2");
       } else {
         // empty space
-        squareHTML = returnSquare("", "", nr);
+        squareHTML = this.returnSquare(nr);
       }
+
       squares.push(squareHTML);
     });
-
+  }
+  displayClickedSquare(squares) {
+    const { clicked } = this.props;
+    if (clicked) {
+      const id = squares[clicked].props.id;
+      const classNames = squares[clicked].props.className.split(" ");
+      classNames.push("clicked");
+      const squareHTML = this.returnSquare(id, ...classNames);
+      squares[clicked] = squareHTML;
+    }
+  }
+  upgradeSquares(squares) {
     if (JSON.stringify(squares) !== JSON.stringify(this.state.squares)) {
       this.setState({
         squares
@@ -49,9 +65,17 @@ class Board extends React.Component {
     }
   }
 
+  async componentDidUpdate() {
+    let squares = [];
+    await this.displaySquares(squares);
+    await this.displayClickedSquare(squares);
+
+    this.upgradeSquares(squares);
+  }
+
   render() {
     return (
-      <div className="board" {...this.props}>
+      <div className="board" onClick={this.props.onClick}>
         {this.state.squares}
       </div>
     );

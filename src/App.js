@@ -17,7 +17,6 @@ class App extends React.Component {
     board: [],
     player1Pawns: {},
     player2Pawns: {},
-    clicked: null,
     possibilityMoves: []
   };
 
@@ -167,6 +166,8 @@ class App extends React.Component {
         <Board
           onClick={e => this.handleClickBoard(e)}
           board={this.state.board}
+          possibilityMoves={this.state.possibilityMoves}
+          clicked={this.state.clickedIndex}
         />
       </>
     );
