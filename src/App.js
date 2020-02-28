@@ -69,41 +69,18 @@ class App extends React.Component {
         board.push(freeSpace);
       }
     };
-
     firstLine("player1");
     secondLine("player1");
     freePlaces();
     secondLine("player2");
     firstLine("player2");
-
     return board;
   }
-
   resetPossibilityMoves() {
     this.setState({
       possibilityMoves: []
     });
   }
-  isThereOnlyYourPawn(ind, player) {
-    // this function return boolean of that is your pawn there
-    // its simple because of value of pawns
-    // empty - 0, player1 - << 1 << 6, player2 - << 11 << 16
-    // IF EMPTY RETURN TRUE
-    // IF ITS THERE UR PAWN RETURN FALSE
-    const { board } = this.state;
-    if (player === "player1") {
-      if (board[ind] >= 1 && board[ind] <= 6) {
-        // for player1 on ind is there another his pawn
-        return false;
-      } else return true;
-    } else if (player === "player2") {
-      if (board[ind] >= 11 && board[ind] <= 16) {
-        // for player1 on ind is there another his pawn
-        return false;
-      } else return true;
-    }
-  }
-
   resetClicked() {
     this.setState({
       clickedIndex: null
@@ -239,7 +216,7 @@ class App extends React.Component {
   }
 
   isOnTheEdge(type, index) {
-    // type mean 'left' or 'right'
+    // type mean left / right / top / bottom
     if (type === "left") {
       for (let i = 0; i <= 56; i += 8) {
         if (index === i) return true;
@@ -422,6 +399,7 @@ class App extends React.Component {
       return board[index] >= 11 && board[index] <= 16;
     }
   }
+
   // put index and array, it will push if can move there or can beat enemy pawn or return false just because this method is used in loop basically(BUT NOT ALWAYS), it help to break it
   logicMovement(i, array) {
     // its empty => PUSH TO ARRAY
@@ -440,7 +418,6 @@ class App extends React.Component {
 
     return true;
   }
-
   moveRook(index) {
     // rook can move in 4 directions(N E S W) for full length
     let possibilityMoves = [];
@@ -471,7 +448,6 @@ class App extends React.Component {
     rookMoveHorizontal(possibilityMoves);
     return possibilityMoves;
   }
-
   movePawn(index) {
     const { turn } = this.state;
     const possibilityMoves = [];
@@ -494,125 +470,50 @@ class App extends React.Component {
         }
       }
     };
-
     movePawnUp(possibilityMoves);
     checkIfFirstMove(possibilityMoves);
     return possibilityMoves;
   }
-
   moveKing(index) {
     // king can move to 1 pool to every direciton
-    const kingMoveLeft = (ind, possibilityMovesArr) => {
-      let couldMove = false;
-      const possibilityIndex = ind - 1;
-      for (let i = 0; i < 64; i += 8) {
-        if (
-          possibilityIndex >= i &&
-          this.isThereOnlyYourPawn(possibilityIndex, turn)
-        ) {
-          couldMove = true;
-        }
+    let possibilityMoves = [];
+    const moveKingInEveryDirection = possibilityMovesArr => {
+      let possibilityMoves = [
+        index - 9,
+        index - 8,
+        index - 7,
+        index - 1,
+        index + 1,
+        index + 7,
+        index + 8,
+        index + 9
+      ];
+      if (this.isOnTheEdge("top", index)) {
+        possibilityMoves = possibilityMoves.filter(item => item !== index - 9);
+        possibilityMoves = possibilityMoves.filter(item => item !== index - 8);
+        possibilityMoves = possibilityMoves.filter(item => item !== index - 7);
       }
-      couldMove && possibilityMovesArr.push(possibilityIndex);
-    };
-    const kingMoveRight = (ind, possibilityMovesArr) => {
-      let couldMove = false;
-      const possibilityIndex = ind + 1;
-      for (let i = 7; i < 64; i += 8) {
-        if (
-          possibilityIndex <= i &&
-          this.isThereOnlyYourPawn(possibilityIndex, turn)
-        ) {
-          couldMove = true;
-        }
+      if (this.isOnTheEdge("bottom", index)) {
+        possibilityMoves = possibilityMoves.filter(item => item !== index + 7);
+        possibilityMoves = possibilityMoves.filter(item => item !== index + 8);
+        possibilityMoves = possibilityMoves.filter(item => item !== index + 9);
       }
-      couldMove && possibilityMovesArr.push(possibilityIndex);
-    };
-    const kingMoveUp = (ind, possibilityMovesArr) => {
-      const possibilityIndex = ind - 8;
-      if (
-        possibilityIndex >= 0 &&
-        this.isThereOnlyYourPawn(possibilityIndex, turn)
-      ) {
-        possibilityMovesArr.push(possibilityIndex);
+      if (this.isOnTheEdge("left", index)) {
+        possibilityMoves = possibilityMoves.filter(item => item !== index - 9);
+        possibilityMoves = possibilityMoves.filter(item => item !== index - 1);
+        possibilityMoves = possibilityMoves.filter(item => item !== index + 7);
       }
-    };
-    const kingMoveDown = (ind, possibilityMovesArr) => {
-      const possibilityIndex = ind + 8;
-      if (
-        possibilityIndex < 64 &&
-        this.isThereOnlyYourPawn(possibilityIndex, turn)
-      ) {
-        possibilityMovesArr.push(possibilityIndex);
+      if (this.isOnTheEdge("right", index)) {
+        possibilityMoves = possibilityMoves.filter(item => item !== index - 7);
+        possibilityMoves = possibilityMoves.filter(item => item !== index + 1);
+        possibilityMoves = possibilityMoves.filter(item => item !== index + 9);
       }
+      possibilityMoves.forEach(item =>
+        this.logicMovement(item, possibilityMovesArr)
+      );
     };
 
-    const kingMoveTopLeft = (ind, possibilityMovesArr) => {
-      let couldMove = false;
-      const possibilityIndex = ind - 9;
-      if (
-        possibilityIndex >= 0 &&
-        this.isThereOnlyYourPawn(possibilityIndex, turn)
-      ) {
-        // then i have to check if king is not on left edge
-        for (let i = 0; i < 64; i += 8) {
-          if (ind !== i) couldMove = true;
-        }
-        couldMove && possibilityMovesArr.push(possibilityIndex);
-      }
-    };
-    const kingMoveBottomLeft = (ind, possibilityMovesArr) => {
-      let couldMove = false;
-      const possibilityIndex = ind + 7;
-      if (
-        possibilityIndex < 64 &&
-        this.isThereOnlyYourPawn(possibilityIndex, turn)
-      ) {
-        // then i have to check if king is not on left edge
-        for (let i = 0; i < 64; i += 8) {
-          if (ind !== i) couldMove = true;
-        }
-        couldMove && possibilityMovesArr.push(possibilityIndex);
-      }
-    };
-    const kingMoveTopRight = (ind, possibilityMovesArr) => {
-      let couldMove = false;
-      const possibilityIndex = ind - 7;
-      if (
-        possibilityIndex >= 0 &&
-        this.isThereOnlyYourPawn(possibilityIndex, turn)
-      ) {
-        for (let i = 7; i < 64; i += 8) {
-          // then i have to check if king is on the right edge
-          if (ind !== i) couldMove = true;
-        }
-        couldMove && possibilityMovesArr.push(possibilityIndex);
-      }
-    };
-    const kingMoveBottomRight = (ind, possibilityMovesArr) => {
-      let couldMove = false;
-      const possibilityIndex = ind + 9;
-      if (
-        possibilityIndex < 64 &&
-        this.isThereOnlyYourPawn(possibilityIndex, turn)
-      ) {
-        for (let i = 7; i < 64; i += 8) {
-          if (ind !== i) couldMove = true;
-        }
-        couldMove && possibilityMovesArr.push(possibilityIndex);
-      }
-    };
-    const { turn, board } = this.state;
-    let possibilityMoves = [];
-    // these functions are checking if kinng can move, if it can it push possibility index to array
-    kingMoveLeft(index, possibilityMoves);
-    kingMoveRight(index, possibilityMoves);
-    kingMoveUp(index, possibilityMoves);
-    kingMoveDown(index, possibilityMoves);
-    kingMoveBottomLeft(index, possibilityMoves);
-    kingMoveBottomRight(index, possibilityMoves);
-    kingMoveTopRight(index, possibilityMoves);
-    kingMoveTopLeft(index, possibilityMoves);
+    moveKingInEveryDirection(possibilityMoves);
     return possibilityMoves;
   }
 
