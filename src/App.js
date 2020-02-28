@@ -44,12 +44,12 @@ class App extends React.Component {
         indexes = player2PawnsIndexes;
       }
       board.push(indexes.rook);
-      board.push(indexes.bishop);
       board.push(indexes.knight);
+      board.push(indexes.bishop);
       board.push(indexes.queen);
       board.push(indexes.king);
-      board.push(indexes.knight);
       board.push(indexes.bishop);
+      board.push(indexes.knight);
       board.push(indexes.rook);
     };
     const secondLine = player => {
@@ -86,6 +86,7 @@ class App extends React.Component {
     // this function return boolean of that is your pawn there
     // its simple because of value of pawns
     // empty - 0, player1 - << 1 << 6, player2 - << 11 << 16
+    // if empty return true
     const { board } = this.state;
     if (player === "player1") {
       if (board[ind] >= 1 && board[ind] <= 6) {
@@ -137,19 +138,121 @@ class App extends React.Component {
     // these function return array of possibility moves
     pawn: clickedIndex => this.movePawn(clickedIndex),
     king: clickedIndex => this.moveKing(clickedIndex),
-    rook: clickedIndex => this.moveRook(clickedIndex)
+    rook: clickedIndex => this.moveRook(clickedIndex),
+    knight: clickedIndex => this.moveKnight(clickedIndex)
   };
+
+  moveKnight(index) {
+    // skoczek
+    // it have 8 possibilities to move, its always 2 place in horizontal/verticale and then 1 place in vertical/horizontal
+    let possibilityMoves = [];
+    const { turn } = this.state;
+
+    const moveKnight = possibilityMovesArr => {
+      let possibilitiesIndexes = [
+        index - 10,
+        index - 17,
+        index + 15,
+        index + 6,
+        index - 15,
+        index - 6,
+        index + 17,
+        index + 10
+      ];
+      const column = index % 8;
+      const row = Math.floor(index / 8);
+      // rejected this that doesnt match
+      // COLUMNS
+      if (column === 0) {
+        possibilitiesIndexes = possibilitiesIndexes.filter(
+          item => item !== index - 10
+        );
+        possibilitiesIndexes = possibilitiesIndexes.filter(
+          item => item !== index + 6
+        );
+        possibilitiesIndexes = possibilitiesIndexes.filter(
+          item => item !== index - 17
+        );
+        possibilitiesIndexes = possibilitiesIndexes.filter(
+          item => item !== index + 15
+        );
+      }
+      if (column === 1) {
+        possibilitiesIndexes = possibilitiesIndexes.filter(
+          item => item !== index - 10
+        );
+        possibilitiesIndexes = possibilitiesIndexes.filter(
+          item => item !== index + 6
+        );
+      }
+      if (column === 7) {
+        possibilitiesIndexes = possibilitiesIndexes.filter(
+          item => item !== index + 10
+        );
+        possibilitiesIndexes = possibilitiesIndexes.filter(
+          item => item !== index - 6
+        );
+        possibilitiesIndexes = possibilitiesIndexes.filter(
+          item => item !== index + 17
+        );
+        possibilitiesIndexes = possibilitiesIndexes.filter(
+          item => item !== index - 15
+        );
+      }
+      if (column === 6) {
+        possibilitiesIndexes = possibilitiesIndexes.filter(
+          item => item !== index + 10
+        );
+        possibilitiesIndexes = possibilitiesIndexes.filter(
+          item => item !== index - 6
+        );
+      }
+
+      // ROWS
+
+      if (row === 0) {
+        possibilitiesIndexes.filter(item => item !== index - 10);
+        possibilitiesIndexes.filter(item => item !== index - 17);
+        possibilitiesIndexes.filter(item => item !== index - 15);
+        possibilitiesIndexes.filter(item => item !== index - 6);
+      }
+      if (row === 1) {
+        possibilitiesIndexes.filter(item => item !== index - 17);
+        possibilitiesIndexes.filter(item => item !== index - 15);
+      }
+      if (row === 7) {
+        possibilitiesIndexes.filter(item => item !== index + 10);
+        possibilitiesIndexes.filter(item => item !== index + 17);
+        possibilitiesIndexes.filter(item => item !== index + 15);
+        possibilitiesIndexes.filter(item => item !== index + 6);
+      }
+      if (row === 6) {
+        possibilitiesIndexes.filter(item => item !== index + 6);
+        possibilitiesIndexes.filter(item => item !== index + 10);
+      }
+
+      possibilitiesIndexes.forEach(item => {
+        if (item >= 0 && item < 64 && this.isThereOnlyYourPawn(item, turn)) {
+          possibilityMovesArr.push(item);
+        }
+      });
+    };
+
+    moveKnight(possibilityMoves);
+    return possibilityMoves;
+  }
 
   moveRook(index) {
     // rook can move in 4 directions(N E S W) for full length
     let possibilityMoves = [];
+    const { turn } = this.state;
     const rookMoveVertical = possibilityMovesArr => {
       // wchich column
       const column = index % 8;
       const rangeIndexStart = column;
       const rangeIndexEnd = rangeIndexStart + 56;
       for (let i = rangeIndexStart; i <= rangeIndexEnd; i += 8) {
-        possibilityMovesArr.push(i);
+        this.isThereOnlyYourPawn(i, turn) && possibilityMovesArr.push(i);
       }
     };
     const rookMoveHorizontal = possibilityMovesArr => {
@@ -159,7 +262,7 @@ class App extends React.Component {
       const rangeIndexStart = lane * 8;
       const rangeIndexEnd = lane * 8 + 8;
       for (let i = rangeIndexStart; i < rangeIndexEnd; i++) {
-        possibilityMovesArr.push(i);
+        this.isThereOnlyYourPawn(i, turn) && possibilityMovesArr.push(i);
       }
     };
     rookMoveHorizontal(possibilityMoves);

@@ -58,7 +58,7 @@ class Board extends React.Component {
   }
   displayClickedSquare(squares) {
     const { clicked } = this.props;
-    if (clicked) {
+    if (typeof clicked === "number") {
       this.addClassName(squares, clicked, "clicked");
     }
   }
