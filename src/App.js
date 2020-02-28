@@ -18,7 +18,9 @@ class App extends React.Component {
     player1Pawns: {},
     player2Pawns: {},
     possibilityMoves: [],
-    clickedIndex: null
+    clickedIndex: null,
+    player1BeatenPawns: [],
+    player2BeatenPawns: []
   };
 
   componentDidMount() {
@@ -111,6 +113,49 @@ class App extends React.Component {
       clickedIndex
     });
   }
+  isInPossibilityMoves(index) {
+    const { possibilityMoves } = this.state;
+    return possibilityMoves.includes(index);
+  }
+  updateBoard(newIndex) {
+    let { turn, board, clickedIndex: oldIndex } = this.state;
+    const movedPawn = board[oldIndex];
+    let beatenPawn = false;
+    const ifPawnHasBeenBeaten = () => {
+      let boolean = false;
+      if (turn === "player1") {
+        if (board[newIndex] >= 11 && board[newIndex] <= 16) boolean = true;
+      } else if (turn === "player2") {
+        if (board[newIndex] >= 1 && board[newIndex] <= 6) boolean = true;
+      }
+      return boolean;
+    };
+    board[oldIndex] = 0; // set old place pawn to empty
+    if (ifPawnHasBeenBeaten()) {
+      beatenPawn = board[newIndex];
+      board[newIndex] = movedPawn;
+    } else {
+      board[newIndex] = movedPawn;
+    }
+
+    this.setState({
+      board
+    });
+    return beatenPawn;
+  }
+  updateBeatenPawns(pawn) {
+    const { turn } = this.state;
+    const beatenPawnsArr = this.state[`${turn}BeatenPawns`];
+    beatenPawnsArr.push(pawn);
+    this.setState({
+      beatenPawnsArr
+    });
+  }
+  changeTurn() {
+    this.setState(prevState => ({
+      turn: !prevState.turn
+    }));
+  }
 
   async handleClickBoard(e) {
     // 0. reset possibility moves
@@ -120,17 +165,35 @@ class App extends React.Component {
     // 4. display possibilites moves
     // 5. handleNextClick, if has been clicked on prohibited place, unclick pawn
     e.persist();
-    await this.resetPossibilityMoves();
+    this.resetPossibilityMoves();
     const pawn = e.target.classList[1];
+    const clickedIndex = parseInt(e.target.id);
+
+    // if 2 times in a row was clicked the same place, unClicked this
+    if (clickedIndex === this.state.clickedIndex) {
+      this.resetClicked();
+      this.resetPossibilityMoves();
+      return;
+    }
+
+    // if something is already clicked
+    if (this.state.clickedIndex) {
+      // 1. check out if clicked index is in possibility moves
+      // 2. update board
+      if (this.isInPossibilityMoves(clickedIndex)) {
+        const beatenPawn = this.updateBoard(clickedIndex);
+        beatenPawn && this.updateBeatenPawns(beatenPawn);
+        this.resetPossibilityMoves();
+        this.resetClicked();
+        this.changeTurn();
+      }
+      // if not, dont do anything
+    }
 
     if (this.possibilityMovesFunc[pawn]) {
-      const clickedIndex = parseInt(e.target.id);
       this.setClicked(clickedIndex);
       const possibilityMoves = this.possibilityMovesFunc[pawn](clickedIndex);
       this.setPossibilityMoves(possibilityMoves);
-    } else {
-      // empty square
-      this.resetClicked();
     }
   }
 
@@ -450,7 +513,6 @@ class App extends React.Component {
         couldMove && possibilityMovesArr.push(possibilityIndex);
       }
     };
-
     const kingMoveBottomLeft = (ind, possibilityMovesArr) => {
       let couldMove = false;
       const possibilityIndex = ind + 7;
@@ -465,7 +527,6 @@ class App extends React.Component {
         couldMove && possibilityMovesArr.push(possibilityIndex);
       }
     };
-
     const kingMoveTopRight = (ind, possibilityMovesArr) => {
       let couldMove = false;
       const possibilityIndex = ind - 7;
@@ -480,7 +541,6 @@ class App extends React.Component {
         couldMove && possibilityMovesArr.push(possibilityIndex);
       }
     };
-
     const kingMoveBottomRight = (ind, possibilityMovesArr) => {
       let couldMove = false;
       const possibilityIndex = ind + 9;
@@ -494,12 +554,9 @@ class App extends React.Component {
         couldMove && possibilityMovesArr.push(possibilityIndex);
       }
     };
-
     const { turn, board } = this.state;
     let possibilityMoves = [];
-
     // these functions are checking if kinng can move, if it can it push possibility index to array
-
     kingMoveLeft(index, possibilityMoves);
     kingMoveRight(index, possibilityMoves);
     kingMoveUp(index, possibilityMoves);
@@ -508,8 +565,6 @@ class App extends React.Component {
     kingMoveBottomRight(index, possibilityMoves);
     kingMoveTopRight(index, possibilityMoves);
     kingMoveTopLeft(index, possibilityMoves);
-
-    console.log(possibilityMoves);
     return possibilityMoves;
   }
 
