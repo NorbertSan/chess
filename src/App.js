@@ -214,6 +214,11 @@ class App extends React.Component {
     possibilityMoves = possibilityMoves.concat(rookMoves, bishopMoves);
     return possibilityMoves;
   }
+  isGameOver() {
+    const { player1BeatenPawns, player2BeatenPawns } = this.state;
+    const player1King = player1Pawns.king;
+    const player2King = player2Pawns.king;
+  }
 
   isOnTheEdge(type, index) {
     // type mean left / right / top / bottom
@@ -399,6 +404,11 @@ class App extends React.Component {
       return board[index] >= 11 && board[index] <= 16;
     }
   }
+  isEnemyPawnThere(index) {
+    const { board, turn } = this.state;
+    if (turn === "player1") return board[index] >= 11 && board[index] <= 16;
+    if (turn === "player2") return board[index] >= 1 && board[index] <= 6;
+  }
 
   // put index and array, it will push if can move there or can beat enemy pawn or return false just because this method is used in loop basically(BUT NOT ALWAYS), it help to break it
   logicMovement(i, array) {
@@ -449,16 +459,26 @@ class App extends React.Component {
     return possibilityMoves;
   }
   movePawn(index) {
+    // pawn can move 1 place up or 2 if its first move
+    // pawn can beat diagonally, can't beat straight
     const { turn } = this.state;
     const possibilityMoves = [];
+
     const movePawnUp = possibilityMovesArr => {
-      turn === "player1" && this.logicMovement(index + 8, possibilityMovesArr);
-      turn === "player2" && this.logicMovement(index - 8, possibilityMovesArr);
+      if (turn === "player1") {
+        if (this.isEnemyPawnThere(index + 8)) return;
+        this.logicMovement(index + 8, possibilityMovesArr);
+      }
+      if (turn === "player2") {
+        if (this.isEnemyPawnThere(index - 8)) return;
+        this.logicMovement(index - 8, possibilityMovesArr);
+      }
     };
-    const checkIfFirstMove = possibilityMovesArr => {
+    const firstMove = possibilityMovesArr => {
       if (turn === "player1") {
         // 2nd row
         if (index >= 8 && index <= 15) {
+          if (this.isEnemyPawnThere(index + 16)) return; // just because pawn cant beat straight
           this.logicMovement(index + 16, possibilityMovesArr);
         }
       }
@@ -466,12 +486,13 @@ class App extends React.Component {
       if (turn === "player2") {
         // 6th row
         if (index >= 48 && index <= 55) {
+          if (this.isEnemyPawnThere(index - 16)) return;
           this.logicMovement(index - 16, possibilityMovesArr);
         }
       }
     };
     movePawnUp(possibilityMoves);
-    checkIfFirstMove(possibilityMoves);
+    firstMove(possibilityMoves);
     return possibilityMoves;
   }
   moveKing(index) {
