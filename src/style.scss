@@ -94,14 +94,20 @@ body {
 }
 .clicked {
   position: relative;
+  @keyframes appear {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
   &::after {
     content: "";
-    // width: calc(100% - 2px);
-    // height: calc(100% - 2px);
     width: 100%;
     height: 100%;
     position: absolute;
-    border: 2px dashed #b9cced;
+    border: 3px dashed #b9cced;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);

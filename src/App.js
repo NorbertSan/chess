@@ -89,6 +89,7 @@ class App extends React.Component {
     // its simple because of value of pawns
     // empty - 0, player1 - << 1 << 6, player2 - << 11 << 16
     // IF EMPTY RETURN TRUE
+    // IF ITS THERE UR PAWN RETURN FALSE
     const { board } = this.state;
     if (player === "player1") {
       if (board[ind] >= 1 && board[ind] <= 6) {
@@ -237,62 +238,74 @@ class App extends React.Component {
     return possibilityMoves;
   }
 
+  isOnTheEdge(type, index) {
+    // type mean 'left' or 'right'
+    if (type === "left") {
+      for (let i = 0; i <= 56; i += 8) {
+        if (index === i) return true;
+      }
+    }
+    if (type === "right") {
+      for (let i = 7; i < 63; i += 8) {
+        if (index === i) return true;
+      }
+    }
+    if (type === "top") {
+      for (let i = 0; i < 8; i++) {
+        if (index === i) return true;
+      }
+    }
+    if (type === "bottom") {
+      for (let i = 56; i < 64; i++) {
+        if (index === i) return true;
+      }
+    }
+    return false;
+  }
+
   moveBishop(index) {
     // goniec
     // bishop can move diagonally , this possibilty moves make an X
     let possibilityMoves = [];
     const { turn } = this.state;
     const diagonallyStartLeftTop = possibilityMovesArr => {
-      // go down from bishop index
+      // go RIGHT BOTTOM from bishop index
       for (let i = index; i < 64; i += 9) {
-        let isOnTheEdge = false;
-        // if the place is free of your pawn and last possibility move is not on the RIGHT edge
-        for (let j = 7; j < 64; j += 8) {
-          if (i === j) isOnTheEdge = true;
-        }
-        if (this.isThereOnlyYourPawn(i, turn)) {
+        if (this.isOnTheEdge("right", i) || this.isOnTheEdge("bottom", i)) {
+          if (i === index) break; // if bishop stay in the botton / left edge then instead break
           possibilityMovesArr.push(i);
+          break;
         }
-        if (isOnTheEdge) break;
+        if (!this.logicMovement(i + 9, possibilityMoves)) break;
       }
-      // go top from bishop index
+      // go LEFT TOP from bishop index
       for (let i = index; i >= 0; i -= 9) {
-        let isOnTheEdge = false;
-        // if the place is free of your pawn and last possibility move is not on the LEFT edge
-        for (let j = 0; j < 64; j += 8) {
-          if (i === j) isOnTheEdge = true;
-        }
-        if (this.isThereOnlyYourPawn(i, turn)) {
+        if (this.isOnTheEdge("left", i) || this.isOnTheEdge("top", i)) {
+          if (i === index) break; // if bishop stay in the botton / left edge then instead break
           possibilityMovesArr.push(i);
+          break;
         }
-        if (isOnTheEdge) break;
+        if (!this.logicMovement(i - 9, possibilityMoves)) break;
       }
     };
     const diagonallyStartRightTop = possibilityMovesArr => {
-      // go down from bishop index
+      // go LEFT BOTTOM from bishop index
       for (let i = index; i < 64; i += 7) {
-        let isOnTheEdge = false;
-        // if the place is free of your pawn and last possibility move is not on the LEFT edge
-        for (let j = 0; j < 64; j += 8) {
-          if (i === j) isOnTheEdge = true;
-        }
-        if (this.isThereOnlyYourPawn(i, turn)) {
+        if (this.isOnTheEdge("left", i) || this.isOnTheEdge("bottom", i)) {
+          if (i === index) break; // if bishop stay in the botton / left edge then instead break
           possibilityMovesArr.push(i);
+          break;
         }
-        if (isOnTheEdge) break;
+        if (!this.logicMovement(i + 7, possibilityMoves)) break;
       }
-      // go up from bishop index
+      // go RIGHT TOP from bishop index
       for (let i = index; i >= 0; i -= 7) {
-        let isOnTheEdge = false;
-        // if the place is free of your pawn and last possibility move is not on the RIGHT edge
-        for (let j = 7; j < 64; j += 8) {
-          if (i === j) isOnTheEdge = true;
-        }
-        if (this.isThereOnlyYourPawn(i, turn)) {
+        if (this.isOnTheEdge("right", i) || this.isOnTheEdge("top", i)) {
+          if (i === index) break; // if bishop stay in the botton / left edge then instead break
           possibilityMovesArr.push(i);
+          break;
         }
-        if (isOnTheEdge) break;
-        this.isThereOnlyYourPawn(i, turn) && possibilityMovesArr.push(i);
+        if (!this.logicMovement(i - 7, possibilityMoves)) break;
       }
     };
     diagonallyStartLeftTop(possibilityMoves);
@@ -399,32 +412,65 @@ class App extends React.Component {
     moveKnight(possibilityMoves);
     return possibilityMoves;
   }
+  isPoolEmpty(index) {
+    const { board } = this.state;
+    return board[index] === 0;
+  }
+  isPoolContainYourPawn(index) {
+    const { board, turn } = this.state;
+    if (turn === "player1") {
+      return board[index] >= 1 && board[index] <= 6;
+    } else if (turn === "player2") {
+      return board[index] >= 11 && board[index] <= 16;
+    }
+  }
+  // FOR KNIGHT
+  logicMovement(i, array) {
+    // its empty => PUSH TO ARRAY
+    // its your pawn => break; these function return false then, and in the loop it means break;
+    // its enemy pawn => PUSH TO ARRAY AND THEN BREAK;
+    if (this.isPoolEmpty(i)) {
+      array.push(i);
+    } else {
+      if (this.isPoolContainYourPawn(i)) {
+        return false;
+      } else {
+        array.push(i);
+        return false;
+      }
+    }
+
+    return true;
+  }
 
   moveRook(index) {
     // rook can move in 4 directions(N E S W) for full length
     let possibilityMoves = [];
-    const { turn } = this.state;
     const rookMoveVertical = possibilityMovesArr => {
-      // wchich column
-      const column = index % 8;
-      const rangeIndexStart = column;
-      const rangeIndexEnd = rangeIndexStart + 56;
-      for (let i = rangeIndexStart; i <= rangeIndexEnd; i += 8) {
-        this.isThereOnlyYourPawn(i, turn) && possibilityMovesArr.push(i);
+      // go down
+      for (let i = index + 8; i < 64; i += 8) {
+        if (!this.logicMovement(i, possibilityMovesArr)) break;
+      }
+      // go up
+      for (let i = index - 8; i >= 0; i -= 8) {
+        if (!this.logicMovement(i, possibilityMovesArr)) break;
       }
     };
     const rookMoveHorizontal = possibilityMovesArr => {
-      // wchich row
       const lane = Math.floor(index / 8);
-      // 0-7 8-15
       const rangeIndexStart = lane * 8;
       const rangeIndexEnd = lane * 8 + 8;
-      for (let i = rangeIndexStart; i < rangeIndexEnd; i++) {
-        this.isThereOnlyYourPawn(i, turn) && possibilityMovesArr.push(i);
+      //go left
+      for (let i = index - 1; i >= rangeIndexStart; i--) {
+        if (!this.logicMovement(i, possibilityMovesArr)) break;
+      }
+      //go right
+      for (let i = index + 1; i < rangeIndexEnd; i++) {
+        if (!this.logicMovement(i, possibilityMovesArr)) break;
       }
     };
-    rookMoveHorizontal(possibilityMoves);
     rookMoveVertical(possibilityMoves);
+    rookMoveHorizontal(possibilityMoves);
     return possibilityMoves;
   }
 
@@ -485,7 +531,6 @@ class App extends React.Component {
 
   moveKing(index) {
     // king can move to 1 pool to every direciton
-
     const kingMoveLeft = (ind, possibilityMovesArr) => {
       let couldMove = false;
       const possibilityIndex = ind - 1;
