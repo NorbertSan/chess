@@ -140,8 +140,17 @@ class App extends React.Component {
     king: clickedIndex => this.moveKing(clickedIndex),
     rook: clickedIndex => this.moveRook(clickedIndex),
     knight: clickedIndex => this.moveKnight(clickedIndex),
-    bishop: clickedIndex => this.moveBishop(clickedIndex)
+    bishop: clickedIndex => this.moveBishop(clickedIndex),
+    queen: clickedIndex => this.moveQueen(clickedIndex)
   };
+
+  moveQueen(index) {
+    let possibilityMoves = [];
+    const rookMoves = this.moveRook(index);
+    const bishopMoves = this.moveBishop(index);
+    possibilityMoves = possibilityMoves.concat(rookMoves, bishopMoves);
+    return possibilityMoves;
+  }
 
   moveBishop(index) {
     // goniec
@@ -174,7 +183,6 @@ class App extends React.Component {
         if (isOnTheEdge) break;
       }
     };
-
     const diagonallyStartRightTop = possibilityMovesArr => {
       // go down from bishop index
       for (let i = index; i < 64; i += 7) {
@@ -202,7 +210,6 @@ class App extends React.Component {
         this.isThereOnlyYourPawn(i, turn) && possibilityMovesArr.push(i);
       }
     };
-
     diagonallyStartLeftTop(possibilityMoves);
     diagonallyStartRightTop(possibilityMoves);
     return possibilityMoves;
