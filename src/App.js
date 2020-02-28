@@ -136,8 +136,36 @@ class App extends React.Component {
   possibilityMovesFunc = {
     // these function return array of possibility moves
     pawn: clickedIndex => this.movePawn(clickedIndex),
-    king: clickedIndex => this.moveKing(clickedIndex)
+    king: clickedIndex => this.moveKing(clickedIndex),
+    rook: clickedIndex => this.moveRook(clickedIndex)
   };
+
+  moveRook(index) {
+    // rook can move in 4 directions(N E S W) for full length
+    let possibilityMoves = [];
+    const rookMoveVertical = possibilityMovesArr => {
+      // wchich column
+      const column = index % 8;
+      const rangeIndexStart = column;
+      const rangeIndexEnd = rangeIndexStart + 56;
+      for (let i = rangeIndexStart; i <= rangeIndexEnd; i += 8) {
+        possibilityMovesArr.push(i);
+      }
+    };
+    const rookMoveHorizontal = possibilityMovesArr => {
+      // wchich row
+      const lane = Math.floor(index / 8);
+      // 0-7 8-15
+      const rangeIndexStart = lane * 8;
+      const rangeIndexEnd = lane * 8 + 8;
+      for (let i = rangeIndexStart; i < rangeIndexEnd; i++) {
+        possibilityMovesArr.push(i);
+      }
+    };
+    rookMoveHorizontal(possibilityMoves);
+    rookMoveVertical(possibilityMoves);
+    return possibilityMoves;
+  }
 
   movePawn(index) {
     const checkIfOutOfBoard = (ind, player) => {
