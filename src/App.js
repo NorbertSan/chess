@@ -20,7 +20,9 @@ class App extends React.Component {
     possibilityMoves: [],
     clickedIndex: null,
     player1BeatenPawns: [],
-    player2BeatenPawns: []
+    player2BeatenPawns: [],
+    isGameOver: false,
+    winner: null
   };
 
   componentDidMount() {
@@ -182,6 +184,7 @@ class App extends React.Component {
         this.resetPossibilityMoves();
         this.resetClicked();
         this.changeTurn();
+        this.isGameOver();
       } else {
         this.resetClicked();
       }
@@ -216,8 +219,31 @@ class App extends React.Component {
   }
   isGameOver() {
     const { player1BeatenPawns, player2BeatenPawns } = this.state;
-    const player1King = player1Pawns.king;
-    const player2King = player2Pawns.king;
+    const player1King = player1PawnsIndexes.king;
+    const player2King = player2PawnsIndexes.king;
+    if (player1BeatenPawns.includes(player2King)) {
+      console.log("koniec gry, wygral pierwszy");
+      this.setState(
+        {
+          isGameOver: true,
+          winner: player1
+        },
+        () => this.endGame()
+      );
+    }
+    if (player2BeatenPawns.includes(player1King)) {
+      this.setState(
+        {
+          isGameOver: true,
+          winner: player2
+        },
+        () => this.endGame()
+      );
+    }
+  }
+  endGame() {
+    const { winner } = this.state;
+    if (winner) alert(`End of the game, winner : ${winner}`);
   }
 
   isOnTheEdge(type, index) {
