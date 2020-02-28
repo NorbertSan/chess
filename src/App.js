@@ -312,13 +312,11 @@ class App extends React.Component {
     diagonallyStartRightTop(possibilityMoves);
     return possibilityMoves;
   }
-
   moveKnight(index) {
     // skoczek
     // it have 8 possibilities to move, its always 2 place in horizontal/verticale and then 1 place in vertical/horizontal
     let possibilityMoves = [];
     const { turn } = this.state;
-
     const moveKnight = possibilityMovesArr => {
       let possibilitiesIndexes = [
         index - 10,
@@ -403,8 +401,8 @@ class App extends React.Component {
       }
 
       possibilitiesIndexes.forEach(item => {
-        if (item >= 0 && item < 64 && this.isThereOnlyYourPawn(item, turn)) {
-          possibilityMovesArr.push(item);
+        if (item >= 0 && item < 64) {
+          this.logicMovement(item, possibilityMoves);
         }
       });
     };
@@ -424,7 +422,7 @@ class App extends React.Component {
       return board[index] >= 11 && board[index] <= 16;
     }
   }
-  // FOR KNIGHT
+  // put index and array, it will push if can move there or can beat enemy pawn or return false just because this method is used in loop basically(BUT NOT ALWAYS), it help to break it
   logicMovement(i, array) {
     // its empty => PUSH TO ARRAY
     // its your pawn => break; these function return false then, and in the loop it means break;
@@ -475,56 +473,29 @@ class App extends React.Component {
   }
 
   movePawn(index) {
-    const checkIfOutOfBoard = possibilityMovesArr => {
-      // checking if pawn is on first/last line of board
-      const { turn: player } = this.state;
-      let possibilityMove = false;
-
-      if (player === "player1") {
-        if (
-          this.isThereOnlyYourPawn(index + 8, player) &&
-          !(index >= 56 && index <= 63)
-        )
-          possibilityMove = index + 8;
-      } else if (player === "player2") {
-        if (
-          this.isThereOnlyYourPawn(index - 8, player) &&
-          !(index >= 0 && index <= 7)
-        )
-          possibilityMove = index - 8;
-      }
-      possibilityMove && possibilityMovesArr.push(possibilityMove);
-    };
-
-    const checkIfFirstMove = possibilityMovesArr => {
-      const { turn: player } = this.state;
-      let possibilityMove = false;
-
-      if (player === "player1") {
-        if (index >= 8 && index <= 15) {
-          if (this.isThereOnlyYourPawn(index + 16, player))
-            possibilityMove = index + 16;
-        }
-      } else if (player === "player2") {
-        // range of places 48-63
-        if (index >= 48 && index <= 55) {
-          if (this.isThereOnlyYourPawn(index - 16, player))
-            possibilityMove = index - 16;
-        }
-      }
-      possibilityMove && possibilityMovesArr.push(possibilityMove);
-    };
-    // pawn can move only 1 up
-    // when its first move, it can move 2 up
-
-    // 0. check out if next move go out of board
-    // 1. check out if its first move and push move if its true
-    // 2. check out if your other pawn isnt there, only look out on YOUR PAWN, NOT ENEMY PLAYER and push move if its true
-    // 3. set possibility moves to state
-
-    const { turn, board } = this.state;
+    const { turn } = this.state;
     const possibilityMoves = [];
-    checkIfOutOfBoard(possibilityMoves);
+    const movePawnUp = possibilityMovesArr => {
+      turn === "player1" && this.logicMovement(index + 8, possibilityMovesArr);
+      turn === "player2" && this.logicMovement(index - 8, possibilityMovesArr);
+    };
+    const checkIfFirstMove = possibilityMovesArr => {
+      if (turn === "player1") {
+        // 2nd row
+        if (index >= 8 && index <= 15) {
+          this.logicMovement(index + 16, possibilityMovesArr);
+        }
+      }
+
+      if (turn === "player2") {
+        // 6th row
+        if (index >= 48 && index <= 55) {
+          this.logicMovement(index - 16, possibilityMovesArr);
+        }
+      }
+    };
+
+    movePawnUp(possibilityMoves);
     checkIfFirstMove(possibilityMoves);
     return possibilityMoves;
   }
