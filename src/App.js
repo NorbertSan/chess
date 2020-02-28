@@ -88,7 +88,7 @@ class App extends React.Component {
     // this function return boolean of that is your pawn there
     // its simple because of value of pawns
     // empty - 0, player1 - << 1 << 6, player2 - << 11 << 16
-    // if empty return true
+    // IF EMPTY RETURN TRUE
     const { board } = this.state;
     if (player === "player1") {
       if (board[ind] >= 1 && board[ind] <= 6) {
@@ -162,23 +162,20 @@ class App extends React.Component {
     });
   }
   ifClickSamePlaceTwoTimes(clickedIndex) {
-    if (clickedIndex === this.state.clickedIndex) {
-      this.resetClicked();
-      this.resetPossibilityMoves();
-      return true;
-    }
-    return false;
+    if (clickedIndex === this.state.clickedIndex) return true;
+    else return false;
   }
   ifItCorrectTurn(clickedIndex) {
     const { turn, board } = this.state;
-    const movedPawn = board[clickedIndex];
+    const clickedPawn = board[clickedIndex];
+    let boolean = false;
     if (turn === "player1") {
-      if (movedPawn >= 0 && movedPawn <= 6) return true;
+      if (clickedPawn >= 1 && clickedPawn <= 6) boolean = true;
     } else if (turn === "player2") {
-      if (movedPawn >= 11 && movedPawn <= 16) return true;
+      if (clickedPawn >= 11 && clickedPawn <= 16) boolean = true;
     }
-    this.resetClicked();
-    return false;
+
+    return boolean;
   }
   async handleClickBoard(e) {
     // 0. reset possibility moves
@@ -189,12 +186,14 @@ class App extends React.Component {
     // 5. handleNextClick, if has been clicked on prohibited place, unclick pawn
     e.persist();
     const pawn = e.target.classList[1];
-    const oldClicked = this.state.clickedIndex;
     const clickedIndex = parseInt(e.target.id);
     this.resetPossibilityMoves();
+    this.resetClicked();
 
-    if (!this.ifItCorrectTurn(clickedIndex)) return;
-    if (this.ifClickSamePlaceTwoTimes(clickedIndex, oldClicked)) return;
+    // if (!this.ifItCorrectTurn(clickedIndex)) return;
+
+    if (this.ifClickSamePlaceTwoTimes(clickedIndex)) return;
+
     // IF SOMETHING IS ALREADY CLICKED
     if (this.state.clickedIndex) {
       // 1. check out if clicked index is in possibility moves
@@ -205,14 +204,15 @@ class App extends React.Component {
         this.resetPossibilityMoves();
         this.resetClicked();
         this.changeTurn();
-        return;
       } else {
         this.resetClicked();
       }
+      return;
     }
 
     // IF IS FIRST CLICK
     if (this.possibilityMovesFunc[pawn]) {
+      if (!this.ifItCorrectTurn(clickedIndex)) return;
       this.setClicked(clickedIndex);
       const possibilityMoves = this.possibilityMovesFunc[pawn](clickedIndex);
       this.setPossibilityMoves(possibilityMoves);
@@ -429,31 +429,44 @@ class App extends React.Component {
   }
 
   movePawn(index) {
-    const checkIfOutOfBoard = (ind, player) => {
+    const checkIfOutOfBoard = possibilityMovesArr => {
       // checking if pawn is on first/last line of board
-      let boolean;
+      const { turn: player } = this.state;
+      let possibilityMove = false;
+
       if (player === "player1") {
-        index >= 56 && index <= 63 ? (boolean = false) : (boolean = true);
+        if (
+          this.isThereOnlyYourPawn(index + 8, player) &&
+          !(index >= 56 && index <= 63)
+        )
+          possibilityMove = index + 8;
       } else if (player === "player2") {
-        index >= 0 && index <= 7 ? (boolean = false) : (boolean = true);
+        if (
+          this.isThereOnlyYourPawn(index - 8, player) &&
+          !(index >= 0 && index <= 7)
+        )
+          possibilityMove = index - 8;
       }
-      return boolean;
+      possibilityMove && possibilityMovesArr.push(possibilityMove);
     };
-    const checkIfFirstMove = (ind, player) => {
-      let moveTwoPlacesIndex;
+
+    const checkIfFirstMove = possibilityMovesArr => {
+      const { turn: player } = this.state;
+      let possibilityMove = false;
+
       if (player === "player1") {
-        if (ind >= 8 && ind <= 15) {
-          // can move 2 turn
-          moveTwoPlacesIndex = ind + 16;
+        if (index >= 8 && index <= 15) {
+          if (this.isThereOnlyYourPawn(index + 16, player))
+            possibilityMove = index + 16;
         }
-      } else {
+      } else if (player === "player2") {
         // range of places 48-63
-        if (ind >= 48 && ind <= 63) {
-          // can move 2 turn
-          moveTwoPlacesIndex = ind - 16;
+        if (index >= 48 && index <= 55) {
+          if (this.isThereOnlyYourPawn(index - 16, player))
+            possibilityMove = index - 16;
         }
       }
-      moveTwoPlacesIndex && possibilityMoves.push(moveTwoPlacesIndex);
+      possibilityMove && possibilityMovesArr.push(possibilityMove);
     };
     // pawn can move only 1 up
     // when its first move, it can move 2 up
@@ -465,12 +478,9 @@ class App extends React.Component {
 
     const { turn, board } = this.state;
     const possibilityMoves = [];
-    if (checkIfOutOfBoard(index, turn)) {
-      checkIfFirstMove(index, turn);
-      this.isThereOnlyYourPawn(index + 8, turn) &&
-        possibilityMoves.push(index + 8);
-      return possibilityMoves;
-    }
+    checkIfOutOfBoard(possibilityMoves);
+    checkIfFirstMove(possibilityMoves);
+    return possibilityMoves;
   }
 
   moveKing(index) {

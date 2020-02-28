@@ -19,11 +19,12 @@ body {
 .board {
   display: -ms-grid;
   display: grid;
-  border: 2px solid rgba(0, 0, 0, 0.4);
+  border: 5px solid #ffc060;
   -ms-grid-columns: (1fr)[8];
       grid-template-columns: repeat(8, 1fr);
   grid-row: auto;
-  background: #eee;
+  position: relative;
+  z-index: 5;
 }
 
 .square {
@@ -33,102 +34,103 @@ body {
   cursor: pointer;
   position: relative;
   font-weight: bold;
+  background-color: #d6d3b4;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;
+  background-size: 70%;
+  z-index: -1;
 }
 
-.king {
-  background: orange;
+.square:nth-child(even) {
+  background-color: #ffc060;
 }
 
-.king::after {
-  content: "king";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+.player1.king {
+  background-image: url("./assets/icons/king-black.svg");
 }
 
-.queen {
-  background: salmon;
+.player1.queen {
+  background-image: url("./assets/icons/queen-black.svg");
 }
 
-.queen::after {
-  content: "queen";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+.player1.rook {
+  background-image: url("./assets/icons/rook-black.svg");
 }
 
-.rook {
-  background: pink;
+.player1.bishop {
+  background-image: url("./assets/icons/bishop-black.svg");
 }
 
-.rook::after {
-  content: "rook";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+.player1.knight {
+  background-image: url("./assets/icons/knight-black.svg");
 }
 
-.bishop {
-  background: blue;
+.player1.pawn {
+  background-image: url("./assets/icons/pawn-black.svg");
 }
 
-.bishop::after {
-  content: "bishop";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+.player2.king {
+  background-image: url("./assets/icons/king-white.svg");
 }
 
-.knight {
-  background: REd;
+.player2.queen {
+  background-image: url("./assets/icons/queen-white.svg");
 }
 
-.knight::after {
-  content: "knight";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+.player2.rook {
+  background-image: url("./assets/icons/rook-white.svg");
 }
 
-.pawn {
-  background: yellow;
+.player2.bishop {
+  background-image: url("./assets/icons/bishop-white.svg");
 }
 
-.pawn::after {
-  content: "pawn";
-  position: absolute;
-  top: 0%;
-  left: 0%;
-  width: 100%;
-  height: 100%;
+.player2.knight {
+  background-image: url("./assets/icons/knight-white.svg");
 }
 
-.player1 {
-  opacity: 0.5;
+.player2.pawn {
+  background-image: url("./assets/icons/pawn-white.svg");
 }
 
 .posibbilityMove {
-  background: black !important;
-  opacity: 1;
+  position: relative;
+  -webkit-animation: helpBounce 0.5s ease-in-out infinite alternate;
+          animation: helpBounce 0.5s ease-in-out infinite alternate;
+}
+
+@-webkit-keyframes helpBounce {
+  0% {
+    opacity: 0.3;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes helpBounce {
+  0% {
+    opacity: 0.3;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.clicked {
+  position: relative;
 }
 
 .clicked::after {
-  content: "clicked";
+  content: "";
+  width: calc(100% - 2px);
+  height: calc(100% - 2px);
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  font-size: 20px;
+  border: 2px dashed black;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+          transform: translate(-50%, -50%);
 }
 /*# sourceMappingURL=style.css.map */
