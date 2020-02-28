@@ -139,8 +139,74 @@ class App extends React.Component {
     pawn: clickedIndex => this.movePawn(clickedIndex),
     king: clickedIndex => this.moveKing(clickedIndex),
     rook: clickedIndex => this.moveRook(clickedIndex),
-    knight: clickedIndex => this.moveKnight(clickedIndex)
+    knight: clickedIndex => this.moveKnight(clickedIndex),
+    bishop: clickedIndex => this.moveBishop(clickedIndex)
   };
+
+  moveBishop(index) {
+    // goniec
+    // bishop can move diagonally , this possibilty moves make an X
+    let possibilityMoves = [];
+    const { turn } = this.state;
+    const diagonallyStartLeftTop = possibilityMovesArr => {
+      // go down from bishop index
+      for (let i = index; i < 64; i += 9) {
+        let isOnTheEdge = false;
+        // if the place is free of your pawn and last possibility move is not on the RIGHT edge
+        for (let j = 7; j < 64; j += 8) {
+          if (i === j) isOnTheEdge = true;
+        }
+        if (this.isThereOnlyYourPawn(i, turn)) {
+          possibilityMovesArr.push(i);
+        }
+        if (isOnTheEdge) break;
+      }
+      // go top from bishop index
+      for (let i = index; i >= 0; i -= 9) {
+        let isOnTheEdge = false;
+        // if the place is free of your pawn and last possibility move is not on the LEFT edge
+        for (let j = 0; j < 64; j += 8) {
+          if (i === j) isOnTheEdge = true;
+        }
+        if (this.isThereOnlyYourPawn(i, turn)) {
+          possibilityMovesArr.push(i);
+        }
+        if (isOnTheEdge) break;
+      }
+    };
+
+    const diagonallyStartRightTop = possibilityMovesArr => {
+      // go down from bishop index
+      for (let i = index; i < 64; i += 7) {
+        let isOnTheEdge = false;
+        // if the place is free of your pawn and last possibility move is not on the LEFT edge
+        for (let j = 0; j < 64; j += 8) {
+          if (i === j) isOnTheEdge = true;
+        }
+        if (this.isThereOnlyYourPawn(i, turn)) {
+          possibilityMovesArr.push(i);
+        }
+        if (isOnTheEdge) break;
+      }
+      // go up from bishop index
+      for (let i = index; i >= 0; i -= 7) {
+        let isOnTheEdge = false;
+        // if the place is free of your pawn and last possibility move is not on the RIGHT edge
+        for (let j = 7; j < 64; j += 8) {
+          if (i === j) isOnTheEdge = true;
+        }
+        if (this.isThereOnlyYourPawn(i, turn)) {
+          possibilityMovesArr.push(i);
+        }
+        if (isOnTheEdge) break;
+        this.isThereOnlyYourPawn(i, turn) && possibilityMovesArr.push(i);
+      }
+    };
+
+    diagonallyStartLeftTop(possibilityMoves);
+    diagonallyStartRightTop(possibilityMoves);
+    return possibilityMoves;
+  }
 
   moveKnight(index) {
     // skoczek
