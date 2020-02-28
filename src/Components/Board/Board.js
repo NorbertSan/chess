@@ -64,7 +64,7 @@ class Board extends React.Component {
   }
   displayPossibilityMoves(squares) {
     const { possibilityMoves } = this.props;
-    if (possibilityMoves.length > 0) {
+    if (possibilityMoves) {
       possibilityMoves.forEach((item, index) => {
         this.addClassName(squares, possibilityMoves[index], "posibbilityMove");
       });

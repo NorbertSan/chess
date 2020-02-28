@@ -152,11 +152,34 @@ class App extends React.Component {
     });
   }
   changeTurn() {
-    this.setState(prevState => ({
-      turn: !prevState.turn
-    }));
+    const presentPlayer = this.state.turn;
+    let nextPlayer;
+    presentPlayer === "player1"
+      ? (nextPlayer = "player2")
+      : (nextPlayer = "player1");
+    this.setState({
+      turn: nextPlayer
+    });
   }
-
+  ifClickSamePlaceTwoTimes(clickedIndex) {
+    if (clickedIndex === this.state.clickedIndex) {
+      this.resetClicked();
+      this.resetPossibilityMoves();
+      return true;
+    }
+    return false;
+  }
+  ifItCorrectTurn(clickedIndex) {
+    const { turn, board } = this.state;
+    const movedPawn = board[clickedIndex];
+    if (turn === "player1") {
+      if (movedPawn >= 0 && movedPawn <= 6) return true;
+    } else if (turn === "player2") {
+      if (movedPawn >= 11 && movedPawn <= 16) return true;
+    }
+    this.resetClicked();
+    return false;
+  }
   async handleClickBoard(e) {
     // 0. reset possibility moves
     // 1. get pawn and index on board
@@ -165,18 +188,14 @@ class App extends React.Component {
     // 4. display possibilites moves
     // 5. handleNextClick, if has been clicked on prohibited place, unclick pawn
     e.persist();
-    this.resetPossibilityMoves();
     const pawn = e.target.classList[1];
+    const oldClicked = this.state.clickedIndex;
     const clickedIndex = parseInt(e.target.id);
+    this.resetPossibilityMoves();
 
-    // if 2 times in a row was clicked the same place, unClicked this
-    if (clickedIndex === this.state.clickedIndex) {
-      this.resetClicked();
-      this.resetPossibilityMoves();
-      return;
-    }
-
-    // if something is already clicked
+    if (!this.ifItCorrectTurn(clickedIndex)) return;
+    if (this.ifClickSamePlaceTwoTimes(clickedIndex, oldClicked)) return;
+    // IF SOMETHING IS ALREADY CLICKED
     if (this.state.clickedIndex) {
       // 1. check out if clicked index is in possibility moves
       // 2. update board
@@ -186,10 +205,13 @@ class App extends React.Component {
         this.resetPossibilityMoves();
         this.resetClicked();
         this.changeTurn();
+        return;
+      } else {
+        this.resetClicked();
       }
-      // if not, dont do anything
     }
 
+    // IF IS FIRST CLICK
     if (this.possibilityMovesFunc[pawn]) {
       this.setClicked(clickedIndex);
       const possibilityMoves = this.possibilityMovesFunc[pawn](clickedIndex);
