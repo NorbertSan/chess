@@ -185,7 +185,7 @@ class App extends React.Component {
     // 4. display possibilites moves
     // 5. handleNextClick, if has been clicked on prohibited place, unclick pawn
     e.persist();
-    const pawn = e.target.classList[1];
+    const pawn = e.target.classList[2];
     const clickedIndex = parseInt(e.target.id);
     this.resetPossibilityMoves();
     this.resetClicked();

@@ -1,27 +1,33 @@
-body {
+*,
+*::after,
+*::before {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+}
+body {
   height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #ddd;
+  background: #b9cced;
+  // filter: invert(1);
 }
 .board {
   display: grid;
   //   width: 90vw;
   //   height: 90vh;
-  border: 5px solid #ffc060;
+  border: 5px solid white;
   grid-template-columns: repeat(8, 1fr);
   grid-row: auto;
   position: relative;
   z-index: 5;
+  font-size: 0;
 }
 .square {
   width: 75px;
   height: 75px;
-  border: 1px solid #ddd;
+  border: 1px solid #b9cced;
   cursor: pointer;
   position: relative;
   font-weight: bold;
@@ -32,10 +38,6 @@ body {
   background-size: 70%;
   z-index: -1;
 }
-.square:nth-child(even) {
-  background-color: #ffc060;
-}
-
 .player1 {
   &.king {
     background-image: url("./assets/icons/king-black.svg");
@@ -78,40 +80,36 @@ body {
 }
 .posibbilityMove {
   position: relative;
+  // filter: invert(1);
+  background-color: #b9cced;
   @keyframes helpBounce {
     0% {
-      // transform: scale(1);
-      // background: black;
-      opacity: 0.3;
+      opacity: 0.5;
     }
     100% {
-      opacity: 1;
-      // transform: scale(1.5);
+      opacity: 0.8;
     }
   }
-  animation: helpBounce 0.5s ease-in-out infinite alternate;
-  // &::after {
-  //   content: "";
-  //   width: calc(100% - 3px);
-  //   height: calc(100% - 3px);
-  //   position: absolute;
-  //   border: 1px green;
-  //   border-style: inset;
-  //   top: 50%;
-  //   left: 50%;
-  //   transform: translate(-50%, -50%);
-  // }
+  animation: helpBounce 1s ease-in-out infinite alternate;
 }
 .clicked {
   position: relative;
   &::after {
     content: "";
-    width: calc(100% - 2px);
-    height: calc(100% - 2px);
+    // width: calc(100% - 2px);
+    // height: calc(100% - 2px);
+    width: 100%;
+    height: 100%;
     position: absolute;
-    border: 2px dashed black;
+    border: 2px dashed #b9cced;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
   }
+}
+.lighter {
+  background-color: #c9753d;
+}
+.darker {
+  background-color: #eb8242;
 }

@@ -11,11 +11,20 @@ class Board extends React.Component {
   };
 
   returnSquare(nr, ...classNames) {
+    let color;
+    if (Math.floor(nr / 8) % 2 === 0) {
+      //2n row
+      nr % 2 === 0 ? (color = "lighter") : (color = "darker");
+    } else {
+      //2n+1 row
+      nr % 2 === 0 ? (color = "darker") : (color = "lighter");
+    }
+
     const classNamesList = classNames.reduce((res, cur) => {
       if (cur) {
         return `${res} ${cur}`;
       }
-    }, "square");
+    }, `square ${color}`);
     return <div key={nr} id={nr} className={classNamesList}></div>;
   }
 

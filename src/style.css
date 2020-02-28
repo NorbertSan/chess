@@ -1,8 +1,13 @@
-body {
+*,
+*::after,
+*::before {
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
   margin: 0;
   padding: 0;
+}
+
+body {
   height: 100vh;
   display: -webkit-box;
   display: -ms-flexbox;
@@ -13,24 +18,25 @@ body {
   -webkit-box-pack: center;
       -ms-flex-pack: center;
           justify-content: center;
-  background: #ddd;
+  background: #b9cced;
 }
 
 .board {
   display: -ms-grid;
   display: grid;
-  border: 5px solid #ffc060;
+  border: 5px solid white;
   -ms-grid-columns: (1fr)[8];
       grid-template-columns: repeat(8, 1fr);
   grid-row: auto;
   position: relative;
   z-index: 5;
+  font-size: 0;
 }
 
 .square {
   width: 75px;
   height: 75px;
-  border: 1px solid #ddd;
+  border: 1px solid #b9cced;
   cursor: pointer;
   position: relative;
   font-weight: bold;
@@ -40,10 +46,6 @@ body {
   background-size: cover;
   background-size: 70%;
   z-index: -1;
-}
-
-.square:nth-child(even) {
-  background-color: #ffc060;
 }
 
 .player1.king {
@@ -96,25 +98,26 @@ body {
 
 .posibbilityMove {
   position: relative;
-  -webkit-animation: helpBounce 0.5s ease-in-out infinite alternate;
-          animation: helpBounce 0.5s ease-in-out infinite alternate;
+  background-color: #b9cced;
+  -webkit-animation: helpBounce 1s ease-in-out infinite alternate;
+          animation: helpBounce 1s ease-in-out infinite alternate;
 }
 
 @-webkit-keyframes helpBounce {
   0% {
-    opacity: 0.3;
+    opacity: 0.5;
   }
   100% {
-    opacity: 1;
+    opacity: 0.8;
   }
 }
 
 @keyframes helpBounce {
   0% {
-    opacity: 0.3;
+    opacity: 0.5;
   }
   100% {
-    opacity: 1;
+    opacity: 0.8;
   }
 }
 
@@ -124,13 +127,21 @@ body {
 
 .clicked::after {
   content: "";
-  width: calc(100% - 2px);
-  height: calc(100% - 2px);
+  width: 100%;
+  height: 100%;
   position: absolute;
-  border: 2px dashed black;
+  border: 2px dashed #b9cced;
   top: 50%;
   left: 50%;
   -webkit-transform: translate(-50%, -50%);
           transform: translate(-50%, -50%);
+}
+
+.lighter {
+  background-color: #c9753d;
+}
+
+.darker {
+  background-color: #eb8242;
 }
 /*# sourceMappingURL=style.css.map */
