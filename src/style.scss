@@ -11,7 +11,8 @@ body {
   font-family: "Lobster", sans-serif;
   height: 100vh;
   width: 100%;
-  background-image: linear-gradient(to top, #6a85b6 0%, #bac8e0 100%);
+  // background-image: linear-gradient(to top, #6a85b6 0%, #bac8e0 100%);
+  background: url("./assets/img/back2.jpg") no-repeat center center / cover;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -101,6 +102,9 @@ body {
   top: 10px;
   transform: translateX(-50%);
   font-size: 24px;
+  h2 {
+    text-shadow: -1px 0 white, 0 1px white, 1px 0 white, 0 -1px white;
+  }
 }
 .player1Board,
 .player2Board {
@@ -116,9 +120,11 @@ body {
     flex-direction: column;
     align-items: center;
     .timer {
-      font-size: 18px;
+      font-size: 22px;
+      font-weight: bold;
     }
     h1 {
+      text-shadow: -1px 0 white, 0 1px white, 1px 0 white, 0 -1px white;
       margin-bottom: 50px;
       position: relative;
       &::after {
@@ -132,6 +138,7 @@ body {
         height: 4px;
         transform: scaleX(0);
         background-color: black;
+        border: 1px solid white;
         transform-origin: center center;
         transition: transform 0.5s ease-in-out;
       }
@@ -142,8 +149,10 @@ body {
   color: #fff;
   .playerBoard {
     h1 {
+      text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
       &::after {
         background-color: white;
+        border: 1px solid black;
       }
     }
   }
@@ -155,17 +164,12 @@ body {
   grid-gap: 20px;
   grid-template-columns: repeat(4, 1fr);
   .beatenPawn {
+    opacity: 0.6;
     width: 50px;
     height: 50px;
   }
 }
-.indicator {
-  position: fixed;
-  width: 120px;
-  height: 5px;
-  background: yellow;
-  // border: 5px solid yellow;
-}
+
 .starderCardWrapper {
   background: url("./assets/img/back.jpg") no-repeat center center / cover;
   height: 100vh;
