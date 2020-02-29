@@ -12,6 +12,7 @@ import {
 import Board from "./Components/Board/Board";
 import Heading from "./Components/Heading/Heading";
 import PlayerBoard from "./Components/PlayerBoard/PlayerBoard";
+import StartedCard from "./Components/StartedCard/StartedCard";
 
 class App extends React.Component {
   state = {
@@ -28,12 +29,16 @@ class App extends React.Component {
     enPassantPossibility: null, // its index where pawn A stay, its pawn wchich is going to beat
     esPassantBeatenIndex: null, // its index where pawn B have to be when want to beat pawn A
     timePlayer1: 0, // IN SECONDS
-    timePlayer2: 0
+    timePlayer2: 0,
+    startGame: false
   };
 
-  componentDidMount() {
+  handleStartGameClick = () => {
+    this.setState({
+      startGame: true
+    });
     this.start();
-  }
+  };
 
   start() {
     this.timer();
@@ -160,22 +165,6 @@ class App extends React.Component {
         this.setState({ timePlayer2 });
       }
     }, 1000);
-
-    // const timer = setInterval(() => {
-    //   if (turn === "player1") {
-    //     timePlayer1++;
-    //     this.setState({
-    //       timePlayer1
-    //     });
-    //   } else if (turn === "player2") {
-    //     timePlayer2++;
-    //     this.setState({
-    //       timePlayer2
-    //     });
-    //   }
-    // }, 1000);
-
-    // return timer;
   };
 
   ifClickSamePlaceTwoTimes(clickedIndex) {
@@ -699,37 +688,46 @@ class App extends React.Component {
   }
 
   render() {
+    const {
+      timePlayer1,
+      player1BeatenPawns,
+      turn,
+      possibilityMoves,
+      clickedIndex,
+      timePlayer2,
+      player2BeatenPawns,
+      board,
+      startGame
+    } = this.state;
     return (
       <>
-        <div className="appWrapper">
-          <div
-            className={`player1Board ${this.state.turn === "player1" &&
-              "active"}`}
-          >
-            <PlayerBoard
-              timer={this.state.timePlayer1}
-              player="player1"
-              beatenPawns={this.state.player1BeatenPawns}
+        {!startGame ? (
+          <StartedCard myFunc={this.handleStartGameClick} />
+        ) : (
+          <div className="appWrapper">
+            <div className={`player1Board ${turn === "player1" && "active"}`}>
+              <PlayerBoard
+                timer={timePlayer1}
+                player="player1"
+                beatenPawns={player1BeatenPawns}
+              />
+            </div>
+            <Heading />
+            <Board
+              onClick={e => this.handleClickBoard(e)}
+              board={board}
+              possibilityMoves={possibilityMoves}
+              clicked={clickedIndex}
             />
+            <div className={`player2Board ${turn === "player2" && "active"}`}>
+              <PlayerBoard
+                timer={timePlayer2}
+                player="player2"
+                beatenPawns={player2BeatenPawns}
+              />
+            </div>
           </div>
-          <Heading />
-          <Board
-            onClick={e => this.handleClickBoard(e)}
-            board={this.state.board}
-            possibilityMoves={this.state.possibilityMoves}
-            clicked={this.state.clickedIndex}
-          />
-          <div
-            className={`player2Board ${this.state.turn === "player2" &&
-              "active"}`}
-          >
-            <PlayerBoard
-              timer={this.state.timePlayer2}
-              player="player2"
-              beatenPawns={this.state.player2BeatenPawns}
-            />
-          </div>
-        </div>
+        )}
       </>
     );
   }
