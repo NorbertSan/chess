@@ -467,13 +467,10 @@ class App extends React.Component {
     // its enemy pawn => PUSH TO ARRAY AND THEN BREAK;
     if (this.isPoolEmpty(i)) {
       array.push(i);
-    } else {
-      if (this.isPoolContainYourPawn(i)) {
-        return false;
-      } else {
-        array.push(i);
-        return false;
-      }
+    } else if (this.isPoolContainYourPawn(i)) return false;
+    else {
+      array.push(i);
+      return false;
     }
 
     return true;
@@ -550,18 +547,18 @@ class App extends React.Component {
     };
     const movePawnUp = possibilityMovesArr => {
       if (turn === "player1") {
-        if (this.isEnemyPawnThere(index + 8)) return;
-        this.logicMovement(index + 8, possibilityMovesArr);
+        if (this.isPoolEmpty(index + 8) && index <= 55)
+          possibilityMovesArr.push(index + 8);
       }
       if (turn === "player2") {
-        if (this.isEnemyPawnThere(index - 8)) return;
-        this.logicMovement(index - 8, possibilityMovesArr);
+        if (this.isPoolEmpty(index - 8) && index >= 8)
+          possibilityMovesArr.push(index - 8);
       }
     };
     const firstMove = possibilityMovesArr => {
       if (turn === "player1") {
         // 2nd row
-        if (index >= 8 && index <= 15) {
+        if (index >= 8 && index <= 15 && this.isPoolEmpty(index + 8)) {
           if (this.isEnemyPawnThere(index + 16)) return; // just because pawn cant beat straight
           this.logicMovement(index + 16, possibilityMovesArr);
         }
@@ -569,39 +566,36 @@ class App extends React.Component {
 
       if (turn === "player2") {
         // 6th row
-        if (index >= 48 && index <= 55) {
+        if (index >= 48 && index <= 55 && this.isPoolEmpty(index - 8)) {
           if (this.isEnemyPawnThere(index - 16)) return;
           this.logicMovement(index - 16, possibilityMovesArr);
         }
       }
     };
     const beatDiagonally = possibilityMovesArr => {
-      // if (turn === "player1") {
-      //   if (this.isPoolContainOpponentPawn(index + 7))
-      //     possibilityMovesArr.push(index + 7);
-      //   if (this.isPoolContainOpponentPawn(index + 9))
-      //     possibilityMovesArr.push(index + 9);
-      // } else if (turn === "player2") {
-      //   if (this.isPoolContainOpponentPawn(index - 7))
-      //     possibilityMovesArr.push(index - 7);
-      //   if (this.isPoolContainOpponentPawn(index - 9))
-      //     possibilityMovesArr.push(index - 9);
-      // }
       if (turn === "player1") {
         if (this.isOnTheEdge("left", index)) {
           this.isPoolContainOpponentPawn(index + 9) &&
             this.logicMovement(index + 9, possibilityMovesArr);
-        }
-        if (this.isOnTheEdge("right", index)) {
+        } else if (this.isOnTheEdge("right", index)) {
           this.isPoolContainOpponentPawn(index + 7) &&
             this.logicMovement(index + 7, possibilityMovesArr);
+        } else {
+          this.isPoolContainOpponentPawn(index + 7) &&
+            this.logicMovement(index + 7, possibilityMovesArr);
+          this.isPoolContainOpponentPawn(index + 9) &&
+            this.logicMovement(index + 9, possibilityMovesArr);
         }
       } else if (turn === "player2") {
         if (this.isOnTheEdge("left", index)) {
           this.isPoolContainOpponentPawn(index - 7) &&
             this.logicMovement(index - 7, possibilityMovesArr);
-        }
-        if (this.isOnTheEdge("right", index)) {
+        } else if (this.isOnTheEdge("right", index)) {
+          this.isPoolContainOpponentPawn(index - 9) &&
+            this.logicMovement(index - 9, possibilityMovesArr);
+        } else {
+          this.isPoolContainOpponentPawn(index - 7) &&
+            this.logicMovement(index - 7, possibilityMovesArr);
           this.isPoolContainOpponentPawn(index - 9) &&
             this.logicMovement(index - 9, possibilityMovesArr);
         }
