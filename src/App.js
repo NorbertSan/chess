@@ -210,9 +210,9 @@ class App extends React.Component {
     this.resetClicked();
 
     if (this.ifClickSamePlaceTwoTimes(clickedIndex)) return;
-
+    console.log(clickedIndex);
     // IF SOMETHING IS ALREADY CLICKED
-    if (this.state.clickedIndex) {
+    if (this.state.clickedIndex || this.state.clickedIndex === 0) {
       // 1. check out if clicked index is in possibility moves
       // 2. update board
       if (this.isInPossibilityMoves(clickedIndex)) {
