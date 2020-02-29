@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css?family=Lobster|Montserrat:500,600&display=swap");
 *,
 *::after,
 *::before {
@@ -8,23 +9,35 @@
 }
 
 body {
+  font-family: "Lobster", sans-serif;
   height: 100vh;
+  width: 100%;
+  background-image: -webkit-gradient(linear, left bottom, left top, from(#6a85b6), to(#bac8e0));
+  background-image: linear-gradient(to top, #6a85b6 0%, #bac8e0 100%);
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
   -webkit-box-pack: center;
       -ms-flex-pack: center;
           justify-content: center;
-  background: #b9cced;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.appWrapper {
+  height: 600px;
+  width: 100vw;
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: 1fr 600px 1fr;
+      grid-template-columns: 1fr 600px 1fr;
 }
 
 .board {
   display: -ms-grid;
   display: grid;
-  border: 5px solid white;
+  border: 5px solid black;
   -ms-grid-columns: (1fr)[8];
       grid-template-columns: repeat(8, 1fr);
   grid-row: auto;
@@ -34,9 +47,6 @@ body {
 }
 
 .square {
-  width: 75px;
-  height: 75px;
-  border: 1px solid #b9cced;
   cursor: pointer;
   position: relative;
   font-weight: bold;
@@ -97,69 +107,70 @@ body {
 }
 
 .posibbilityMove {
-  position: relative;
-  background-color: #b9cced;
-  -webkit-animation: helpBounce 1s ease-in-out infinite alternate;
-          animation: helpBounce 1s ease-in-out infinite alternate;
-}
-
-@-webkit-keyframes helpBounce {
-  0% {
-    opacity: 0.5;
-  }
-  100% {
-    opacity: 0.8;
-  }
-}
-
-@keyframes helpBounce {
-  0% {
-    opacity: 0.5;
-  }
-  100% {
-    opacity: 0.8;
-  }
+  background-color: #cdd26a !important;
+  opacity: 1;
 }
 
 .clicked {
-  position: relative;
-}
-
-@-webkit-keyframes appear {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-
-@keyframes appear {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-
-.clicked::after {
-  content: "";
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  border: 3px dashed #b9cced;
-  top: 50%;
-  left: 50%;
-  -webkit-transform: translate(-50%, -50%);
-          transform: translate(-50%, -50%);
+  background-color: #aaa23a !important;
 }
 
 .lighter {
-  background-color: #c9753d;
+  background-color: #f0d9b5;
 }
 
 .darker {
-  background-color: #eb8242;
+  background-color: #b58863;
+}
+
+.heading {
+  position: fixed;
+  left: 50%;
+  top: 10px;
+  -webkit-transform: translateX(-50%);
+          transform: translateX(-50%);
+  font-size: 24px;
+}
+
+.player1Board,
+.player2Board {
+  font-size: 14px;
+}
+
+.player1Board .playerBoard,
+.player2Board .playerBoard {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.player1Board .playerBoard h1,
+.player2Board .playerBoard h1 {
+  margin-bottom: 50px;
+}
+
+.player2Board {
+  color: #fff;
+}
+
+.beatenPawnArray {
+  display: -ms-grid;
+  display: grid;
+  padding: 20px;
+  grid-gap: 20px;
+  -ms-grid-columns: (1fr)[4];
+      grid-template-columns: repeat(4, 1fr);
+}
+
+.beatenPawnArray .beatenPawn {
+  width: 50px;
+  height: 50px;
 }
 /*# sourceMappingURL=style.css.map */

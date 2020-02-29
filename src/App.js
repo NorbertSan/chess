@@ -10,6 +10,8 @@ import {
   freeSpace
 } from "./config";
 import Board from "./Components/Board/Board";
+import Heading from "./Components/Heading/Heading";
+import PlayerBoard from "./Components/PlayerBoard/PlayerBoard";
 
 class App extends React.Component {
   state = {
@@ -101,7 +103,6 @@ class App extends React.Component {
   }
   updateBoard(newIndex) {
     let { turn, board, clickedIndex: oldIndex } = this.state;
-    console.log(newIndex, oldIndex);
     const movedPawn = board[oldIndex];
     let beatenPawn = false;
     const ifPawnHasBeenBeaten = () => {
@@ -668,12 +669,27 @@ class App extends React.Component {
   render() {
     return (
       <>
-        <Board
-          onClick={e => this.handleClickBoard(e)}
-          board={this.state.board}
-          possibilityMoves={this.state.possibilityMoves}
-          clicked={this.state.clickedIndex}
-        />
+        <div className="appWrapper">
+          <div className="player1Board">
+            <PlayerBoard
+              player="player1"
+              beatenPawns={this.state.player1BeatenPawns}
+            />
+          </div>
+          <Heading />
+          <Board
+            onClick={e => this.handleClickBoard(e)}
+            board={this.state.board}
+            possibilityMoves={this.state.possibilityMoves}
+            clicked={this.state.clickedIndex}
+          />
+          <div className="player2Board">
+            <PlayerBoard
+              player="player2"
+              beatenPawns={this.state.player2BeatenPawns}
+            />
+          </div>
+        </div>
       </>
     );
   }
