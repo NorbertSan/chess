@@ -101,6 +101,7 @@ class App extends React.Component {
   }
   updateBoard(newIndex) {
     let { turn, board, clickedIndex: oldIndex } = this.state;
+    console.log(newIndex, oldIndex);
     const movedPawn = board[oldIndex];
     let beatenPawn = false;
     const ifPawnHasBeenBeaten = () => {
@@ -112,6 +113,7 @@ class App extends React.Component {
       }
       return boolean;
     };
+
     board[oldIndex] = 0; // set old place pawn to empty
     if (ifPawnHasBeenBeaten()) {
       beatenPawn = board[newIndex];
@@ -226,7 +228,6 @@ class App extends React.Component {
     const player1King = player1PawnsIndexes.king;
     const player2King = player2PawnsIndexes.king;
     if (player1BeatenPawns.includes(player2King)) {
-      console.log("koniec gry, wygral pierwszy");
       this.setState(
         {
           isGameOver: true,
@@ -441,7 +442,12 @@ class App extends React.Component {
   }
   enPassantController(clickedIndexOld, index) {
     // bicie w przelocie
-    const { board } = this.state;
+    const { board, esPassantBeatenIndex, enPassantPossibility } = this.state;
+    const isBeatedInEnPassant = () => index === esPassantBeatenIndex;
+    const updateBoardAfterEnPassant = () => {
+      this.updateBeatenPawns(board[enPassantPossibility]);
+      board[enPassantPossibility] = 0;
+    };
     if (
       (board[clickedIndexOld] === player1PawnsIndexes.pawn ||
         board[clickedIndexOld] === player2PawnsIndexes.pawn) &&
@@ -449,7 +455,8 @@ class App extends React.Component {
     ) {
       this.setState({ enPassantPossibility: index });
     } else {
-      this.setState({ enPassantPossibility: null });
+      if (isBeatedInEnPassant()) updateBoardAfterEnPassant();
+      this.setState({ enPassantPossibility: null, esPassantBeatenIndex: null });
     }
   }
 
@@ -569,16 +576,35 @@ class App extends React.Component {
       }
     };
     const beatDiagonally = possibilityMovesArr => {
+      // if (turn === "player1") {
+      //   if (this.isPoolContainOpponentPawn(index + 7))
+      //     possibilityMovesArr.push(index + 7);
+      //   if (this.isPoolContainOpponentPawn(index + 9))
+      //     possibilityMovesArr.push(index + 9);
+      // } else if (turn === "player2") {
+      //   if (this.isPoolContainOpponentPawn(index - 7))
+      //     possibilityMovesArr.push(index - 7);
+      //   if (this.isPoolContainOpponentPawn(index - 9))
+      //     possibilityMovesArr.push(index - 9);
+      // }
       if (turn === "player1") {
-        if (this.isPoolContainOpponentPawn(index + 7))
-          possibilityMovesArr.push(index + 7);
-        if (this.isPoolContainOpponentPawn(index + 9))
-          possibilityMovesArr.push(index + 9);
+        if (this.isOnTheEdge("left", index)) {
+          this.isPoolContainOpponentPawn(index + 9) &&
+            this.logicMovement(index + 9, possibilityMovesArr);
+        }
+        if (this.isOnTheEdge("right", index)) {
+          this.isPoolContainOpponentPawn(index + 7) &&
+            this.logicMovement(index + 7, possibilityMovesArr);
+        }
       } else if (turn === "player2") {
-        if (this.isPoolContainOpponentPawn(index - 7))
-          possibilityMovesArr.push(index - 7);
-        if (this.isPoolContainOpponentPawn(index - 9))
-          possibilityMovesArr.push(index - 9);
+        if (this.isOnTheEdge("left", index)) {
+          this.isPoolContainOpponentPawn(index - 7) &&
+            this.logicMovement(index - 7, possibilityMovesArr);
+        }
+        if (this.isOnTheEdge("right", index)) {
+          this.isPoolContainOpponentPawn(index - 9) &&
+            this.logicMovement(index - 9, possibilityMovesArr);
+        }
       }
     };
 
