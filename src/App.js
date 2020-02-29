@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import "./style.css";
 import {
   player1,
@@ -26,15 +26,18 @@ class App extends React.Component {
     isGameOver: false,
     winner: null,
     enPassantPossibility: null, // its index where pawn A stay, its pawn wchich is going to beat
-    esPassantBeatenIndex: null // its index where pawn B have to be when want to beat pawn A
+    esPassantBeatenIndex: null, // its index where pawn B have to be when want to beat pawn A
+    timePlayer1: 0, // IN SECONDS
+    timePlayer2: 0
   };
 
   componentDidMount() {
     this.start();
   }
 
-  async start() {
-    const board = await this.setBoard();
+  start() {
+    this.timer();
+    const board = this.setBoard();
     this.setState({
       board,
       player1Pawns,
@@ -146,6 +149,35 @@ class App extends React.Component {
       turn: nextPlayer
     });
   }
+  timer = () => {
+    setInterval(() => {
+      let { turn, timePlayer1, timePlayer2 } = this.state;
+      if (turn === "player1") {
+        timePlayer1++;
+        this.setState({ timePlayer1 });
+      } else if (turn === "player2") {
+        timePlayer2++;
+        this.setState({ timePlayer2 });
+      }
+    }, 1000);
+
+    // const timer = setInterval(() => {
+    //   if (turn === "player1") {
+    //     timePlayer1++;
+    //     this.setState({
+    //       timePlayer1
+    //     });
+    //   } else if (turn === "player2") {
+    //     timePlayer2++;
+    //     this.setState({
+    //       timePlayer2
+    //     });
+    //   }
+    // }, 1000);
+
+    // return timer;
+  };
+
   ifClickSamePlaceTwoTimes(clickedIndex) {
     if (clickedIndex === this.state.clickedIndex) return true;
     else return false;
@@ -670,8 +702,12 @@ class App extends React.Component {
     return (
       <>
         <div className="appWrapper">
-          <div className="player1Board">
+          <div
+            className={`player1Board ${this.state.turn === "player1" &&
+              "active"}`}
+          >
             <PlayerBoard
+              timer={this.state.timePlayer1}
               player="player1"
               beatenPawns={this.state.player1BeatenPawns}
             />
@@ -683,8 +719,12 @@ class App extends React.Component {
             possibilityMoves={this.state.possibilityMoves}
             clicked={this.state.clickedIndex}
           />
-          <div className="player2Board">
+          <div
+            className={`player2Board ${this.state.turn === "player2" &&
+              "active"}`}
+          >
             <PlayerBoard
+              timer={this.state.timePlayer2}
               player="player2"
               beatenPawns={this.state.player2BeatenPawns}
             />

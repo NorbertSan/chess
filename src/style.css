@@ -37,7 +37,7 @@ body {
 .board {
   display: -ms-grid;
   display: grid;
-  border: 5px solid black;
+  border: 5px solid white;
   -ms-grid-columns: (1fr)[8];
       grid-template-columns: repeat(8, 1fr);
   grid-row: auto;
@@ -137,8 +137,15 @@ body {
   font-size: 14px;
 }
 
+.player1Board.active .playerBoard h1::after,
+.player2Board.active .playerBoard h1::after {
+  -webkit-transform: scaleX(1) translateX(-50%);
+          transform: scaleX(1) translateX(-50%);
+}
+
 .player1Board .playerBoard,
 .player2Board .playerBoard {
+  position: relative;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -151,13 +158,45 @@ body {
           align-items: center;
 }
 
+.player1Board .playerBoard .timer,
+.player2Board .playerBoard .timer {
+  font-size: 18px;
+}
+
 .player1Board .playerBoard h1,
 .player2Board .playerBoard h1 {
   margin-bottom: 50px;
+  position: relative;
+}
+
+.player1Board .playerBoard h1::after,
+.player2Board .playerBoard h1::after {
+  content: "";
+  position: absolute;
+  width: 150%;
+  left: 50%;
+  -webkit-transform: translateX(-50%);
+          transform: translateX(-50%);
+  bottom: -7px;
+  border-radius: 10px;
+  height: 4px;
+  -webkit-transform: scaleX(0);
+          transform: scaleX(0);
+  background-color: black;
+  -webkit-transform-origin: center center;
+          transform-origin: center center;
+  -webkit-transition: -webkit-transform 0.5s ease-in-out;
+  transition: -webkit-transform 0.5s ease-in-out;
+  transition: transform 0.5s ease-in-out;
+  transition: transform 0.5s ease-in-out, -webkit-transform 0.5s ease-in-out;
 }
 
 .player2Board {
   color: #fff;
+}
+
+.player2Board .playerBoard h1::after {
+  background-color: white;
 }
 
 .beatenPawnArray {
@@ -172,5 +211,12 @@ body {
 .beatenPawnArray .beatenPawn {
   width: 50px;
   height: 50px;
+}
+
+.indicator {
+  position: fixed;
+  width: 120px;
+  height: 5px;
+  background: yellow;
 }
 /*# sourceMappingURL=style.css.map */
