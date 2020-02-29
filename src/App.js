@@ -22,7 +22,9 @@ class App extends React.Component {
     player1BeatenPawns: [],
     player2BeatenPawns: [],
     isGameOver: false,
-    winner: null
+    winner: null,
+    enPassantPossibility: null, // its index where pawn A stay, its pawn wchich is going to beat
+    esPassantBeatenIndex: null // its index where pawn B have to be when want to beat pawn A
   };
 
   componentDidMount() {
@@ -157,6 +159,7 @@ class App extends React.Component {
 
     return boolean;
   }
+
   async handleClickBoard(e) {
     // 0. reset possibility moves
     // 1. get pawn and index on board
@@ -164,13 +167,12 @@ class App extends React.Component {
     // 3. check out possibilities moves
     // 4. display possibilites moves
     // 5. handleNextClick, if has been clicked on prohibited place, unclick pawn
+
     e.persist();
     const pawn = e.target.classList[2];
     const clickedIndex = parseInt(e.target.id);
     this.resetPossibilityMoves();
     this.resetClicked();
-
-    // if (!this.ifItCorrectTurn(clickedIndex)) return;
 
     if (this.ifClickSamePlaceTwoTimes(clickedIndex)) return;
 
@@ -179,6 +181,8 @@ class App extends React.Component {
       // 1. check out if clicked index is in possibility moves
       // 2. update board
       if (this.isInPossibilityMoves(clickedIndex)) {
+        const clickedIndexOld = this.state.clickedIndex;
+        this.enPassantController(clickedIndexOld, clickedIndex);
         const beatenPawn = this.updateBoard(clickedIndex);
         beatenPawn && this.updateBeatenPawns(beatenPawn);
         this.resetPossibilityMoves();
@@ -435,6 +439,19 @@ class App extends React.Component {
     if (turn === "player1") return board[index] >= 11 && board[index] <= 16;
     if (turn === "player2") return board[index] >= 1 && board[index] <= 6;
   }
+  enPassantController(clickedIndexOld, index) {
+    // bicie w przelocie
+    const { board } = this.state;
+    if (
+      (board[clickedIndexOld] === player1PawnsIndexes.pawn ||
+        board[clickedIndexOld] === player2PawnsIndexes.pawn) &&
+      Math.abs(index - clickedIndexOld) === 16
+    ) {
+      this.setState({ enPassantPossibility: index });
+    } else {
+      this.setState({ enPassantPossibility: null });
+    }
+  }
 
   // put index and array, it will push if can move there or can beat enemy pawn or return false just because this method is used in loop basically(BUT NOT ALWAYS), it help to break it
   logicMovement(i, array) {
@@ -489,7 +506,41 @@ class App extends React.Component {
     // pawn can beat diagonally, can't beat straight
     const { turn } = this.state;
     const possibilityMoves = [];
+    const esPassantMove = possibilityMovesArr => {
+      // 1. pawn A had to move 2 pool before this move
+      //  pawnB have to move in specific place, in the same row, and in adjacent column
+      // 2. check if clickedIndex is one of them
+      const { enPassantPossibility } = this.state;
+      let placesWherePawnHaveToBe = [
+        enPassantPossibility - 1,
+        enPassantPossibility + 1
+      ];
+      let placeWherePawnCanBeat;
 
+      if (enPassantPossibility) {
+        if (this.isOnTheEdge("right", enPassantPossibility))
+          placesWherePawnHaveToBe = [enPassantPossibility - 1];
+
+        if (this.isOnTheEdge("left", enPassantPossibility))
+          placesWherePawnHaveToBe = [enPassantPossibility + 1];
+
+        if (placesWherePawnHaveToBe.includes(index)) {
+          // if pawn wchich want to beat enemy pawn is on his left / right side
+          // check out if pool behind the pawn wchich is going to beat is empty
+          if (turn === "player1")
+            placeWherePawnCanBeat = enPassantPossibility + 8;
+          if (turn === "player2")
+            placeWherePawnCanBeat = enPassantPossibility - 8;
+
+          if (this.isPoolEmpty(placeWherePawnCanBeat)) {
+            possibilityMovesArr.push(placeWherePawnCanBeat);
+            this.setState({
+              esPassantBeatenIndex: placeWherePawnCanBeat
+            });
+          }
+        }
+      }
+    };
     const movePawnUp = possibilityMovesArr => {
       if (turn === "player1") {
         if (this.isEnemyPawnThere(index + 8)) return;
@@ -517,8 +568,24 @@ class App extends React.Component {
         }
       }
     };
+    const beatDiagonally = possibilityMovesArr => {
+      if (turn === "player1") {
+        if (this.isPoolContainOpponentPawn(index + 7))
+          possibilityMovesArr.push(index + 7);
+        if (this.isPoolContainOpponentPawn(index + 9))
+          possibilityMovesArr.push(index + 9);
+      } else if (turn === "player2") {
+        if (this.isPoolContainOpponentPawn(index - 7))
+          possibilityMovesArr.push(index - 7);
+        if (this.isPoolContainOpponentPawn(index - 9))
+          possibilityMovesArr.push(index - 9);
+      }
+    };
+
     movePawnUp(possibilityMoves);
     firstMove(possibilityMoves);
+    beatDiagonally(possibilityMoves);
+    esPassantMove(possibilityMoves);
     return possibilityMoves;
   }
   moveKing(index) {
@@ -564,6 +631,14 @@ class App extends React.Component {
     return possibilityMoves;
   }
 
+  isPoolContainOpponentPawn(index) {
+    const { board, turn } = this.state;
+    if (turn === "player1") {
+      return board[index] >= 11 && board[index] <= 16;
+    } else if (turn === "player2") {
+      return board[index] >= 1 && board[index] <= 6;
+    }
+  }
   setPossibilityMoves(moves) {
     this.setState({
       possibilityMoves: moves
