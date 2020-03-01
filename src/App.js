@@ -34,7 +34,23 @@ class App extends React.Component {
     timePlayer2: 0,
     startGame: false,
     isSettingsOpen: false,
-    showPossibilityMoves: true
+    showPossibilityMoves: true,
+    darkMode: false
+  };
+
+  handleToggleDarkMode = () => {
+    this.setState(
+      prevState => ({
+        darkMode: !prevState.darkMode
+      }),
+      () => {
+        if (this.state.darkMode) {
+          document.body.classList.add("darkMode");
+        } else {
+          document.body.classList.remove("darkMode");
+        }
+      }
+    );
   };
 
   handleToggleShowPossibilitySetting = () => {
@@ -715,7 +731,8 @@ class App extends React.Component {
       board,
       startGame,
       isSettingsOpen,
-      showPossibilityMoves
+      showPossibilityMoves,
+      darkMode
     } = this.state;
     return (
       <>
@@ -752,6 +769,8 @@ class App extends React.Component {
               isOpen={isSettingsOpen}
             />
             <SettingsModal
+              toggleDarkMoveFn={this.handleToggleDarkMode}
+              isDarkMode={darkMode}
               isOpen={isSettingsOpen}
               showPossibilityMoves={showPossibilityMoves}
               togglePossibilityMovesFunc={

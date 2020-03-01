@@ -1,4 +1,5 @@
 @import url("https://fonts.googleapis.com/css?family=Lobster|Montserrat:500,600&display=swap");
+@import url("https://fonts.googleapis.com/css?family=Sigmar+One&display=swap");
 *,
 *::after,
 *::before {
@@ -23,6 +24,13 @@ body {
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
+  -webkit-transition: all 0.5s ease-in-out;
+  transition: all 0.5s ease-in-out;
+}
+
+body.darkMode {
+  -webkit-filter: invert(1);
+          filter: invert(1);
 }
 
 .appWrapper {
@@ -38,7 +46,7 @@ body {
   display: -ms-grid;
   display: grid;
   border-radius: 10px;
-  border: 20px solid rgba(255, 255, 255, 0.1);
+  border: 20px solid rgba(255, 255, 255, 0.05);
   -ms-grid-columns: (1fr)[8];
       grid-template-columns: repeat(8, 1fr);
   grid-row: auto;
@@ -162,6 +170,7 @@ body {
 }
 
 .heading {
+  font-family: "Sigmar One";
   position: fixed;
   left: 50%;
   top: 10px;
@@ -392,6 +401,7 @@ body {
 }
 
 .startedCard__rules__singleRule .counter {
+  font-family: "Sigmar One";
   font-style: italic;
   font-weight: bold;
   font-size: 1.3rem;
@@ -404,7 +414,7 @@ body {
   height: 35px;
   position: fixed;
   top: 15px;
-  left: 10px;
+  left: 35px;
   -webkit-transform-origin: center center;
           transform-origin: center center;
   cursor: pointer;
@@ -420,6 +430,8 @@ body {
 }
 
 .settingModal {
+  font-family: "Montserrat";
+  font-size: 13px;
   z-index: 99;
   -webkit-transition: -webkit-transform 0.7s ease-in-out;
   transition: -webkit-transform 0.7s ease-in-out;
@@ -452,7 +464,37 @@ body {
           transform: translateX(10%);
 }
 
+.settingModal .slider {
+  -webkit-transition: all 0.5s ease-in-out;
+  transition: all 0.5s ease-in-out;
+  z-index: 99;
+  cursor: pointer;
+  width: 60px;
+  height: 20px;
+  background: grey;
+  border-radius: 20px;
+  position: relative;
+}
+
+.settingModal .slider .circle {
+  -webkit-transition: all 0.5s ease-in-out;
+  transition: all 0.5s ease-in-out;
+  position: absolute;
+  width: 25px;
+  height: 25px;
+  background: #eee;
+  top: 50%;
+  left: 0;
+  -webkit-transform: translateY(-50%);
+          transform: translateY(-50%);
+  border-radius: 50%;
+  -webkit-box-shadow: 0 0 3px grey;
+          box-shadow: 0 0 3px grey;
+}
+
 .settingModal::before {
+  font-family: "Lobster", sans-serif;
+  font-size: 20px;
   content: "Ustawienia";
   color: white;
   display: -webkit-box;
@@ -468,7 +510,7 @@ body {
   position: absolute;
   left: 0;
   top: 0;
-  height: 10%;
+  height: 15%;
   width: 100%;
   background-color: #d4d7dd;
   z-index: -1;
@@ -477,9 +519,8 @@ body {
           transform: scaleX(1.5);
 }
 
-.settingModal .showPossibilityMovesSetting {
-  font-family: "Montserrat";
-  font-size: 13px;
+.settingModal .showPossibilityMovesSetting,
+.settingModal .darkModeSetting {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -491,39 +532,19 @@ body {
           align-items: center;
 }
 
-.settingModal .showPossibilityMovesSetting.active .possibilityMovesLabel {
+.showPossibilityMovesSetting.active .slider {
   background: #8cba51;
 }
 
-.settingModal .showPossibilityMovesSetting.active .possibilityMovesLabel .circle {
+.showPossibilityMovesSetting.active .slider .circle {
   left: 40px;
 }
 
-.settingModal .showPossibilityMovesSetting .possibilityMovesLabel {
-  -webkit-transition: all 0.5s ease-in-out;
-  transition: all 0.5s ease-in-out;
-  z-index: 99;
-  cursor: pointer;
-  width: 60px;
-  height: 20px;
-  background: grey;
-  border-radius: 20px;
-  position: relative;
+.darkModeSetting.active .slider {
+  background: #8cba51;
 }
 
-.settingModal .showPossibilityMovesSetting .possibilityMovesLabel .circle {
-  -webkit-transition: all 0.5s ease-in-out;
-  transition: all 0.5s ease-in-out;
-  position: absolute;
-  width: 25px;
-  height: 25px;
-  background: #eee;
-  top: 50%;
-  left: 0;
-  -webkit-transform: translateY(-50%);
-          transform: translateY(-50%);
-  border-radius: 50%;
-  -webkit-box-shadow: 0 0 3px grey;
-          box-shadow: 0 0 3px grey;
+.darkModeSetting.active .slider .circle {
+  left: 40px;
 }
 /*# sourceMappingURL=style.css.map */

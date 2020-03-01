@@ -1,4 +1,5 @@
 @import url("https://fonts.googleapis.com/css?family=Lobster|Montserrat:500,600&display=swap");
+@import url("https://fonts.googleapis.com/css?family=Sigmar+One&display=swap");
 
 *,
 *::after,
@@ -10,13 +11,15 @@
 body {
   font-family: "Lobster", sans-serif;
   height: 100vh;
-  // // width: 100%;
-  // background-image: linear-gradient(to top, #6a85b6 0%, #bac8e0 100%);
   background: url("./assets/img/back2.jpg") no-repeat center center / cover;
   background-image: linear-gradient(to top, #d7d2cc 0%, #304352 100%);
   display: flex;
   justify-content: center;
   align-items: center;
+  transition: all 0.5s ease-in-out;
+  &.darkMode {
+    filter: invert(1);
+  }
 }
 .appWrapper {
   height: 600px;
@@ -27,7 +30,7 @@ body {
 .board {
   display: grid;
   border-radius: 10px;
-  border: 20px solid rgba(255, 255, 255, 0.1);
+  border: 20px solid rgba(255, 255, 255, 0.05);
   grid-template-columns: repeat(8, 1fr);
   grid-row: auto;
   position: relative;
@@ -138,6 +141,7 @@ body {
   background-color: #b58863;
 }
 .heading {
+  font-family: "Sigmar One";
   position: fixed;
   left: 50%;
   top: 10px;
@@ -299,6 +303,7 @@ body {
       line-height: 1.4;
       padding: 0 30px;
       .counter {
+        font-family: "Sigmar One";
         font-style: italic;
         font-weight: bold;
         font-size: 1.3rem;
@@ -314,7 +319,7 @@ body {
   height: 35px;
   position: fixed;
   top: 15px;
-  left: 10px;
+  left: 35px;
   transform-origin: center center;
   cursor: pointer;
   transition: transform 0.7s ease-in-out;
@@ -326,6 +331,8 @@ body {
   &.active {
     transform: translateX(10%);
   }
+  font-family: "Montserrat";
+  font-size: 13px;
   z-index: 99;
   transition: transform 0.7s ease-in-out;
   transform: translateX(-110%);
@@ -341,7 +348,31 @@ body {
   justify-content: space-around;
   border-radius: 10%;
   overflow: hidden;
+  .slider {
+    transition: all 0.5s ease-in-out;
+    z-index: 99;
+    cursor: pointer;
+    width: 60px;
+    height: 20px;
+    background: grey;
+    border-radius: 20px;
+    position: relative;
+    .circle {
+      transition: all 0.5s ease-in-out;
+      position: absolute;
+      width: 25px;
+      height: 25px;
+      background: #eee;
+      top: 50%;
+      left: 0;
+      transform: translateY(-50%);
+      border-radius: 50%;
+      box-shadow: 0 0 3px grey;
+    }
+  }
   &::before {
+    font-family: "Lobster", sans-serif;
+    font-size: 20px;
     content: "Ustawienia";
     color: white;
     display: flex;
@@ -351,47 +382,37 @@ body {
     position: absolute;
     left: 0;
     top: 0;
-    height: 10%;
+    height: 15%;
     width: 100%;
     background-color: #d4d7dd;
     z-index: -1;
     border-radius: 0 0 50% 50%/ 0 0 100% 100%;
     transform: scaleX(1.5);
   }
-  .showPossibilityMovesSetting {
-    font-family: "Montserrat";
-    font-size: 13px;
+  .showPossibilityMovesSetting,
+  .darkModeSetting {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    &.active {
-      .possibilityMovesLabel {
-        background: #8cba51;
-        .circle {
-          left: 40px;
-        }
+  }
+}
+
+.showPossibilityMovesSetting {
+  &.active {
+    .slider {
+      background: #8cba51;
+      .circle {
+        left: 40px;
       }
     }
-    .possibilityMovesLabel {
-      transition: all 0.5s ease-in-out;
-      z-index: 99;
-      cursor: pointer;
-      width: 60px;
-      height: 20px;
-      background: grey;
-      border-radius: 20px;
-      position: relative;
+  }
+}
+.darkModeSetting {
+  &.active {
+    .slider {
+      background: #8cba51;
       .circle {
-        transition: all 0.5s ease-in-out;
-        position: absolute;
-        width: 25px;
-        height: 25px;
-        background: #eee;
-        top: 50%;
-        left: 0;
-        transform: translateY(-50%);
-        border-radius: 50%;
-        box-shadow: 0 0 3px grey;
+        left: 40px;
       }
     }
   }

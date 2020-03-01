@@ -3,7 +3,9 @@ import React from "react";
 const SettingsModal = ({
   isOpen,
   showPossibilityMoves,
-  togglePossibilityMovesFunc
+  togglePossibilityMovesFunc,
+  toggleDarkMoveFn,
+  isDarkMode
 }) => (
   <>
     <div className={`settingModal ${isOpen && "active"}`}>
@@ -12,10 +14,13 @@ const SettingsModal = ({
           "active"}`}
       >
         <span>Pokaż możliwości ruchów</span>
-        <div
-          className="possibilityMovesLabel"
-          onClick={togglePossibilityMovesFunc}
-        >
+        <div className="slider" onClick={togglePossibilityMovesFunc}>
+          <div className="circle"></div>
+        </div>
+      </div>
+      <div className={`darkModeSetting ${isDarkMode && "active"}`}>
+        <span>Włącz tryb dzienny / nocny</span>
+        <div className="slider" onClick={toggleDarkMoveFn}>
           <div className="circle"></div>
         </div>
       </div>
