@@ -37,7 +37,8 @@ body {
 .board {
   display: -ms-grid;
   display: grid;
-  border: 5px solid white;
+  border-radius: 10px;
+  border: 20px solid rgba(255, 255, 255, 0.1);
   -ms-grid-columns: (1fr)[8];
       grid-template-columns: repeat(8, 1fr);
   grid-row: auto;
@@ -56,6 +57,43 @@ body {
   background-size: cover;
   background-size: 70%;
   z-index: -1;
+}
+
+.square::after, .square::before {
+  color: black;
+  font-size: 14px;
+  position: absolute;
+  z-index: 9;
+}
+
+.square:nth-child(8n + 1)::after {
+  content: attr(data-rownumber);
+  left: -15px;
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+          transform: translateY(-50%);
+}
+
+.square:nth-child(58)::after,
+.square:nth-child(59)::after,
+.square:nth-child(60)::after,
+.square:nth-child(61)::after,
+.square:nth-child(62)::after,
+.square:nth-child(63)::after,
+.square:nth-child(64)::after {
+  content: attr(data-columnletter);
+  bottom: -20px;
+  left: 50%;
+  -webkit-transform: translateX(-50%);
+          transform: translateX(-50%);
+}
+
+.square:nth-child(57)::before {
+  content: "A";
+  bottom: -20px;
+  left: 50%;
+  -webkit-transform: translateX(-50%);
+          transform: translateX(-50%);
 }
 
 .player1.king {

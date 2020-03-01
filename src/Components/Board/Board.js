@@ -5,6 +5,8 @@ import {
   freeSpace
 } from "../../config";
 
+const letters = ["A", "B", "C", "D", "E", "F", "G", "H"];
+
 class Board extends React.Component {
   state = {
     squares: []
@@ -25,7 +27,15 @@ class Board extends React.Component {
         return `${res} ${cur}`;
       }
     }, `square ${color}`);
-    return <div key={nr} id={nr} data-id={nr} className={classNamesList}></div>;
+    return (
+      <div
+        key={nr}
+        id={nr}
+        data-rownumber={nr % 8 === 0 && Math.floor(nr / 8) + 1}
+        data-columnletter={nr > 56 && nr < 64 && letters[nr - 56]}
+        className={classNamesList}
+      ></div>
+    );
   }
 
   addClassName(squares, index, className) {
