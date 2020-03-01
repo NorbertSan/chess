@@ -18,24 +18,16 @@ import SettingsModal from "./Components/SettingsModal/SettingsModal";
 
 class App extends React.Component {
   state = {
-    turn: player1,
-    board: [],
-    player1Pawns: {},
-    player2Pawns: {},
-    possibilityMoves: [],
-    clickedIndex: null,
-    player1BeatenPawns: [],
-    player2BeatenPawns: [],
-    isGameOver: false,
-    winner: null,
-    enPassantPossibility: null, // its index where pawn A stay, its pawn wchich is going to beat
-    esPassantBeatenIndex: null, // its index where pawn B have to be when want to beat pawn A
-    timePlayer1: 0, // IN SECONDS
-    timePlayer2: 0,
-    startGame: false,
-    isSettingsOpen: false,
-    showPossibilityMoves: true,
-    darkMode: false
+    startGame: false
+  };
+
+  handleResetGame = () => {
+    const { timer } = this.state;
+    clearInterval(timer);
+    this.setState({
+      startGame: false,
+      timer: null
+    });
   };
 
   handleToggleDarkMode = () => {
@@ -54,7 +46,6 @@ class App extends React.Component {
   };
 
   handleToggleShowPossibilitySetting = () => {
-    console.log(this);
     this.setState(prevState => ({
       showPossibilityMoves: !prevState.showPossibilityMoves
     }));
@@ -69,8 +60,33 @@ class App extends React.Component {
     this.setState({
       startGame: true
     });
-    this.start();
+    this.setInitialState();
   };
+
+  setInitialState() {
+    const timer = this.timer();
+    const board = this.setBoard();
+    this.setState({
+      timer,
+      turn: player1,
+      board,
+      player1Pawns,
+      player2Pawns,
+      possibilityMoves: [],
+      clickedIndex: null,
+      player1BeatenPawns: [],
+      player2BeatenPawns: [],
+      isGameOver: false,
+      winner: null,
+      enPassantPossibility: null, // its index where pawn A stay, its pawn wchich is going to beat
+      esPassantBeatenIndex: null, // its index where pawn B have to be when want to beat pawn A
+      timePlayer1: 0, // IN SECONDS
+      timePlayer2: 0,
+      isSettingsOpen: false,
+      showPossibilityMoves: true,
+      darkMode: false
+    });
+  }
 
   start() {
     this.timer();
@@ -187,7 +203,7 @@ class App extends React.Component {
     });
   }
   timer = () => {
-    setInterval(() => {
+    const timer = setInterval(() => {
       let { turn, timePlayer1, timePlayer2 } = this.state;
       if (turn === "player1") {
         timePlayer1++;
@@ -197,6 +213,7 @@ class App extends React.Component {
         this.setState({ timePlayer2 });
       }
     }, 1000);
+    return timer;
   };
 
   ifClickSamePlaceTwoTimes(clickedIndex) {
@@ -776,6 +793,7 @@ class App extends React.Component {
               togglePossibilityMovesFunc={
                 this.handleToggleShowPossibilitySetting
               }
+              resetGameFunc={this.handleResetGame}
             />
           </>
         )}
