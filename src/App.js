@@ -733,7 +733,8 @@ class App extends React.Component {
               </div>
               <Heading />
               <Board
-                onClick={e => this.handleClickBoard(e)}
+                showPossibilityMoves={showPossibilityMoves}
+                clickBoard={e => this.handleClickBoard(e)}
                 board={board}
                 possibilityMoves={possibilityMoves}
                 clicked={clickedIndex}

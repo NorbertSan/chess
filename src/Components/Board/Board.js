@@ -25,7 +25,7 @@ class Board extends React.Component {
         return `${res} ${cur}`;
       }
     }, `square ${color}`);
-    return <div key={nr} id={nr} className={classNamesList}></div>;
+    return <div key={nr} id={nr} data-id={nr} className={classNamesList}></div>;
   }
 
   addClassName(squares, index, className) {
@@ -72,11 +72,17 @@ class Board extends React.Component {
     }
   }
   displayPossibilityMoves(squares) {
-    const { possibilityMoves } = this.props;
-    if (possibilityMoves) {
-      possibilityMoves.forEach((item, index) => {
-        this.addClassName(squares, possibilityMoves[index], "posibbilityMove");
-      });
+    if (this.props.showPossibilityMoves) {
+      const { possibilityMoves } = this.props;
+      if (possibilityMoves) {
+        possibilityMoves.forEach((item, index) => {
+          this.addClassName(
+            squares,
+            possibilityMoves[index],
+            "posibbilityMove"
+          );
+        });
+      }
     }
   }
   upgradeSquares(squares) {
@@ -97,8 +103,9 @@ class Board extends React.Component {
   }
 
   render() {
+    const { clickBoard } = this.props;
     return (
-      <div className="board" onClick={this.props.onClick}>
+      <div className="board" onClick={clickBoard}>
         {this.state.squares}
       </div>
     );
