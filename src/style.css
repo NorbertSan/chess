@@ -1,5 +1,4 @@
 @import url("https://fonts.googleapis.com/css?family=Lobster|Montserrat:500,600&display=swap");
-@import url("https://fonts.googleapis.com/css?family=Montserrat&display=swap");
 *,
 *::after,
 *::before {
@@ -166,6 +165,7 @@ body {
 .player2Board .playerBoard .timer {
   font-size: 22px;
   font-weight: bold;
+  text-shadow: -1px 0 white, 0 1px white, 1px 0 white, 0 -1px white;
 }
 
 .player1Board .playerBoard h1,
@@ -183,9 +183,9 @@ body {
   left: 50%;
   -webkit-transform: translateX(-50%);
           transform: translateX(-50%);
-  bottom: -7px;
+  bottom: -9px;
   border-radius: 10px;
-  height: 4px;
+  height: 6px;
   -webkit-transform: scaleX(0);
           transform: scaleX(0);
   background-color: black;
@@ -200,6 +200,10 @@ body {
 
 .player2Board {
   color: #fff;
+}
+
+.player2Board .playerBoard .timer {
+  text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
 }
 
 .player2Board .playerBoard h1 {
@@ -233,10 +237,10 @@ body {
 }
 
 .startedCard {
+  overflow: hidden;
   padding: 30px;
   width: 700px;
   height: 550px;
-  position: fixed;
   top: 50%;
   left: 50%;
   -webkit-transform: translate(-50%, -50%);
@@ -254,6 +258,19 @@ body {
           align-items: center;
   position: relative;
   justify-items: center;
+}
+
+.startedCard::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 20%;
+  width: 100%;
+  border-radius: 0 0 50% 50%/0 0 100% 100%;
+  -webkit-transform: scaleX(1.2);
+          transform: scaleX(1.2);
+  background: black;
 }
 
 .startedCard .arrow {
@@ -284,9 +301,12 @@ body {
 }
 
 .startedCard__title {
+  color: White;
   -ms-flex-item-align: start;
       align-self: flex-start;
   font-size: 3rem;
+  position: relative;
+  z-index: 999;
 }
 
 .startedCard__button {
@@ -335,8 +355,138 @@ body {
 }
 
 .startedCard__rules__singleRule .counter {
+  font-style: italic;
   font-weight: bold;
   font-size: 1.3rem;
   padding-right: 10px;
+}
+
+.modalLabel {
+  background: url("./assets/icons/gear.svg") no-repeat center center/cover;
+  width: 35px;
+  height: 35px;
+  position: fixed;
+  top: 15px;
+  left: 10px;
+  -webkit-transform-origin: center center;
+          transform-origin: center center;
+  cursor: pointer;
+  -webkit-transition: -webkit-transform 0.7s ease-in-out;
+  transition: -webkit-transform 0.7s ease-in-out;
+  transition: transform 0.7s ease-in-out;
+  transition: transform 0.7s ease-in-out, -webkit-transform 0.7s ease-in-out;
+}
+
+.modalLabel.active {
+  -webkit-transform: rotate(180deg);
+          transform: rotate(180deg);
+}
+
+.settingModal {
+  z-index: 99;
+  -webkit-transition: -webkit-transform 0.7s ease-in-out;
+  transition: -webkit-transform 0.7s ease-in-out;
+  transition: transform 0.7s ease-in-out;
+  transition: transform 0.7s ease-in-out, -webkit-transform 0.7s ease-in-out;
+  -webkit-transform: translateX(-110%);
+          transform: translateX(-110%);
+  position: fixed;
+  top: 80px;
+  left: 0;
+  width: 350px;
+  height: 450px;
+  background: white;
+  padding: 30px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -ms-flex-pack: distribute;
+      justify-content: space-around;
+  border-radius: 0% 10% 10% 0;
+  overflow: hidden;
+}
+
+.settingModal.active {
+  -webkit-transform: translateX(0);
+          transform: translateX(0);
+}
+
+.settingModal::before {
+  content: "Ustawienia";
+  color: white;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  text-align: center;
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 10%;
+  width: 100%;
+  background-color: #d4d7dd;
+  z-index: -1;
+  border-radius: 0 0 50% 50%/ 0 0 100% 100%;
+  -webkit-transform: scaleX(1.5);
+          transform: scaleX(1.5);
+}
+
+.settingModal .showPossibilityMovesSetting {
+  font-family: "Montserrat";
+  font-size: 13px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.settingModal .showPossibilityMovesSetting.active .possibilityMovesLabel {
+  background: #8cba51;
+}
+
+.settingModal .showPossibilityMovesSetting.active .possibilityMovesLabel .circle {
+  left: 40px;
+}
+
+.settingModal .showPossibilityMovesSetting .possibilityMovesLabel {
+  -webkit-transition: all 0.5s ease-in-out;
+  transition: all 0.5s ease-in-out;
+  z-index: 99;
+  cursor: pointer;
+  width: 60px;
+  height: 20px;
+  background: grey;
+  border-radius: 20px;
+  position: relative;
+}
+
+.settingModal .showPossibilityMovesSetting .possibilityMovesLabel .circle {
+  -webkit-transition: all 0.5s ease-in-out;
+  transition: all 0.5s ease-in-out;
+  position: absolute;
+  width: 25px;
+  height: 25px;
+  background: #eee;
+  top: 50%;
+  left: 0;
+  -webkit-transform: translateY(-50%);
+          transform: translateY(-50%);
+  border-radius: 50%;
+  -webkit-box-shadow: 0 0 3px grey;
+          box-shadow: 0 0 3px grey;
 }
 /*# sourceMappingURL=style.css.map */

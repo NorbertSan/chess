@@ -13,6 +13,8 @@ import Board from "./Components/Board/Board";
 import Heading from "./Components/Heading/Heading";
 import PlayerBoard from "./Components/PlayerBoard/PlayerBoard";
 import StartedCard from "./Components/StartedCard/StartedCard";
+import ModalLabel from "./Components/ModalLabel/ModalLabel";
+import SettingsModal from "./Components/SettingsModal/SettingsModal";
 
 class App extends React.Component {
   state = {
@@ -30,7 +32,21 @@ class App extends React.Component {
     esPassantBeatenIndex: null, // its index where pawn B have to be when want to beat pawn A
     timePlayer1: 0, // IN SECONDS
     timePlayer2: 0,
-    startGame: false
+    startGame: false,
+    isSettingsOpen: false,
+    showPossibilityMoves: true
+  };
+
+  handleToggleShowPossibilitySetting = () => {
+    console.log(this);
+    this.setState(prevState => ({
+      showPossibilityMoves: !prevState.showPossibilityMoves
+    }));
+  };
+  handleToggleSettingsModal = () => {
+    this.setState(prevState => ({
+      isSettingsOpen: !prevState.isSettingsOpen
+    }));
   };
 
   handleStartGameClick = () => {
@@ -697,36 +713,51 @@ class App extends React.Component {
       timePlayer2,
       player2BeatenPawns,
       board,
-      startGame
+      startGame,
+      isSettingsOpen,
+      showPossibilityMoves
     } = this.state;
     return (
       <>
         {!startGame ? (
           <StartedCard myFunc={this.handleStartGameClick} />
         ) : (
-          <div className="appWrapper">
-            <div className={`player1Board ${turn === "player1" && "active"}`}>
-              <PlayerBoard
-                timer={timePlayer1}
-                player="player1"
-                beatenPawns={player1BeatenPawns}
+          <>
+            <div className="appWrapper">
+              <div className={`player1Board ${turn === "player1" && "active"}`}>
+                <PlayerBoard
+                  timer={timePlayer1}
+                  player="player1"
+                  beatenPawns={player1BeatenPawns}
+                />
+              </div>
+              <Heading />
+              <Board
+                onClick={e => this.handleClickBoard(e)}
+                board={board}
+                possibilityMoves={possibilityMoves}
+                clicked={clickedIndex}
               />
+              <div className={`player2Board ${turn === "player2" && "active"}`}>
+                <PlayerBoard
+                  timer={timePlayer2}
+                  player="player2"
+                  beatenPawns={player2BeatenPawns}
+                />
+              </div>
             </div>
-            <Heading />
-            <Board
-              onClick={e => this.handleClickBoard(e)}
-              board={board}
-              possibilityMoves={possibilityMoves}
-              clicked={clickedIndex}
+            <ModalLabel
+              togglemodal={this.handleToggleSettingsModal}
+              isOpen={isSettingsOpen}
             />
-            <div className={`player2Board ${turn === "player2" && "active"}`}>
-              <PlayerBoard
-                timer={timePlayer2}
-                player="player2"
-                beatenPawns={player2BeatenPawns}
-              />
-            </div>
-          </div>
+            <SettingsModal
+              isOpen={isSettingsOpen}
+              showPossibilityMoves={showPossibilityMoves}
+              togglePossibilityMovesFunc={
+                this.handleToggleShowPossibilitySetting
+              }
+            />
+          </>
         )}
       </>
     );
