@@ -70,7 +70,7 @@ class App extends React.Component {
     const board = this.setBoard();
     this.setState(prevState => ({
       timer,
-      turn: player1,
+      turn: player2,
       board,
       player1Pawns,
       player2Pawns,
@@ -756,7 +756,7 @@ class App extends React.Component {
     return (
       <>
         {!startGame ? (
-          <StartedCard myFunc={this.handleStartGameClick} />
+          <StartedCard handleStartGameFunc={this.handleStartGameClick} />
         ) : (
           <>
             <div className="appWrapper">

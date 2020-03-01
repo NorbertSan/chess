@@ -1,6 +1,7 @@
 import React from "react";
 import leftArrow from "../../assets/icons/leftArrow.svg";
 import rightArrow from "../../assets/icons/rightArrow.svg";
+import KeyboardEventHandler from "react-keyboard-event-handler";
 
 const gameRules = [
   "Wieża porusza się o dowolną liczbę wolnych pól w poziomie i pionie; porusza się ona również podczas roszady (specjalnego ruchu króla)",
@@ -16,11 +17,29 @@ class StartedCard extends React.Component {
   state = {
     index: 0
   };
-  handleClickArrow(e) {
+  componentDidMount() {
+    this.setState({ index: 0 });
+  }
+  componentWillReceiveProps({ keydown }) {
+    if (keydown.event) {
+      console.log(keydown.event.which);
+    }
+  }
+  handleClickArrow(e, typeArrow) {
     const rulesLength = gameRules.length;
     let { index } = this.state;
     const arrow = e.target;
-    if (arrow.classList.contains("right")) {
+
+    if (typeArrow) {
+      if (typeArrow === "left") {
+        index === 0 ? (index = rulesLength - 1) : index--;
+      }
+      if (typeArrow === "right") {
+        index === rulesLength - 1 ? (index = 0) : index++;
+      }
+    }
+
+    if (arrow && arrow.classList.contains("right")) {
       index === rulesLength - 1 ? (index = 0) : index++;
     } else if (arrow.classList.contains("left")) {
       index === 0 ? (index = rulesLength - 1) : index--;
@@ -28,12 +47,20 @@ class StartedCard extends React.Component {
     this.setState({ index });
   }
 
+  handleKeyPress(key, e) {
+    console.log(key, e);
+  }
+
   render() {
     const { index } = this.state;
-    const { myFunc } = this.props;
+    const { handleStartGameFunc } = this.props;
     return (
       <>
-        <div className="starderCardWrapper">
+        <KeyboardEventHandler
+          handleKeys={["right", "left"]}
+          onKeyEvent={(key, e) => this.handleClickArrow(e, key)}
+        />
+        <div className="startedCardWrapper">
           <div className="startedCard">
             <img
               src={leftArrow}
@@ -57,7 +84,7 @@ class StartedCard extends React.Component {
             </div>
             <button
               className="startedCard__button"
-              onClick={() => this.props.myFunc()}
+              onClick={handleStartGameFunc}
             >
               Zacznij gre !{" "}
             </button>
