@@ -26,7 +26,9 @@ class App extends React.Component {
     clearInterval(timer);
     this.setState({
       startGame: false,
-      timer: null
+      timer: null,
+      showPossibilityMoves: true,
+      darkMode: false
     });
   };
 
@@ -82,9 +84,7 @@ class App extends React.Component {
       esPassantBeatenIndex: null, // its index where pawn B have to be when want to beat pawn A
       timePlayer1: 0, // IN SECONDS
       timePlayer2: 0,
-      isSettingsOpen: false,
-      showPossibilityMoves: true,
-      darkMode: false
+      isSettingsOpen: false
     });
   }
 
