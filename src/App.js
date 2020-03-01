@@ -18,7 +18,9 @@ import SettingsModal from "./Components/SettingsModal/SettingsModal";
 
 class App extends React.Component {
   state = {
-    startGame: false
+    startGame: false,
+    showPossibilityMoves: true,
+    darkMode: false
   };
 
   handleResetGame = () => {
@@ -26,9 +28,7 @@ class App extends React.Component {
     clearInterval(timer);
     this.setState({
       startGame: false,
-      timer: null,
-      showPossibilityMoves: true,
-      darkMode: false
+      timer: null
     });
   };
 
@@ -68,7 +68,7 @@ class App extends React.Component {
   setInitialState() {
     const timer = this.timer();
     const board = this.setBoard();
-    this.setState({
+    this.setState(prevState => ({
       timer,
       turn: player1,
       board,
@@ -84,8 +84,10 @@ class App extends React.Component {
       esPassantBeatenIndex: null, // its index where pawn B have to be when want to beat pawn A
       timePlayer1: 0, // IN SECONDS
       timePlayer2: 0,
-      isSettingsOpen: false
-    });
+      isSettingsOpen: false,
+      darkMode: prevState.darkMode,
+      showPossibilityMoves: prevState.showPossibilityMoves
+    }));
   }
 
   start() {
