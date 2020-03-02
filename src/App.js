@@ -16,6 +16,7 @@ import StartedCard from "./Components/StartedCard/StartedCard";
 import ModalLabel from "./Components/ModalLabel/ModalLabel";
 import SettingsModal from "./Components/SettingsModal/SettingsModal";
 import CheckAlert from "./Components/CheckAlert/CheckAlert";
+import WinnerCard from "./Components/WinnerCard/WinnerCard";
 
 class App extends React.Component {
   state = {
@@ -334,9 +335,9 @@ class App extends React.Component {
         this.resetPossibilityMoves();
         this.resetClicked();
         await this.checkController();
-        setTimeout(() => {
-          this.matController();
-        }, 0);
+        // setTimeout(() => {
+        //   this.matController();
+        // }, 0);
         await this.changeTurn();
         this.checkController();
         this.isGameOver();
@@ -376,27 +377,17 @@ class App extends React.Component {
     const player1King = player1PawnsIndexes.king;
     const player2King = player2PawnsIndexes.king;
     if (player1BeatenPawns.includes(player2King)) {
-      this.setState(
-        {
-          isGameOver: true,
-          winner: player1
-        },
-        () => this.endGame()
-      );
+      this.setState({
+        isGameOver: true,
+        winner: "player1"
+      });
     }
     if (player2BeatenPawns.includes(player1King)) {
-      this.setState(
-        {
-          isGameOver: true,
-          winner: player2
-        },
-        () => this.endGame()
-      );
+      this.setState({
+        isGameOver: true,
+        winner: "player2"
+      });
     }
-  }
-  endGame() {
-    const { winner } = this.state;
-    if (winner) alert(`End of the game, winner : ${winner}`);
   }
 
   isOnTheEdge(type, index) {
@@ -826,7 +817,8 @@ class App extends React.Component {
       startGame,
       isSettingsOpen,
       showPossibilityMoves,
-      darkMode
+      darkMode,
+      winner
     } = this.state;
     return (
       <>
@@ -834,7 +826,10 @@ class App extends React.Component {
           <StartedCard handleStartGameFunc={this.handleStartGameClick} />
         ) : (
           <>
-            <div className="appWrapper">
+            {winner && (
+              <WinnerCard winner={turn} resetGameFunc={this.handleResetGame} />
+            )}
+            <div className={`appWrapper ${winner && "endGame"}`}>
               <div className={`player1Board ${turn === "player1" && "active"}`}>
                 <PlayerBoard
                   timer={timePlayer1}
