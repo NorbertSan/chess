@@ -15,6 +15,7 @@ import PlayerBoard from "./Components/PlayerBoard/PlayerBoard";
 import StartedCard from "./Components/StartedCard/StartedCard";
 import ModalLabel from "./Components/ModalLabel/ModalLabel";
 import SettingsModal from "./Components/SettingsModal/SettingsModal";
+import CheckAlert from "./Components/CheckAlert/CheckAlert";
 
 class App extends React.Component {
   state = {
@@ -92,13 +93,14 @@ class App extends React.Component {
     }));
   }
 
-  checkPlayer() {
+  checkController() {
     // CZY JEST SZACH
     // after every move check all possibilities moves from player moved in that moment
     // player1 move => player1 all possibilities moves
     // THIS FUNC IS INVOKED AFTER BOARD UPDATE AND BEFORE CHANGE TURN
+    // I HAVE TO INVOKED THIS FUNC FOR 2 PLAYERS, AFTER EVERY MOVE
 
-    const returnPawnArray = player => {
+    const returnPawnArray = () => {
       if (turn === "player1") {
         const allPawnsPlayer1 = [];
         board.forEach((square, index) => {
@@ -143,13 +145,21 @@ class App extends React.Component {
     const allMoves = [];
     const array = returnPawnArray();
     array.forEach(item => {
-      // allMoves.push(getMovesOfSinglePawn(item));
-      // console.log(getMovesOfSinglePawn(item));
       allMoves.push(...getMovesOfSinglePawn(item));
     });
     const kingPosition = getEnemyKingPosition();
     const boolean = checkIfKingIsOnEnemyRange(kingPosition, allMoves);
     setCheckState(boolean);
+  }
+
+  matController() {
+    // have to check if present player check is true, it means mat
+    let opponent;
+    this.state.turn === "player1"
+      ? (opponent = "player2")
+      : (opponent = "player1");
+    if (this.state[`${this.state.turn}Check`])
+      alert(`mat, ${this.state.turn} lose`);
   }
 
   start() {
@@ -319,12 +329,16 @@ class App extends React.Component {
       if (this.isInPossibilityMoves(clickedIndex)) {
         const clickedIndexOld = this.state.clickedIndex;
         this.enPassantController(clickedIndexOld, clickedIndex);
-        const beatenPawn = this.updateBoard(clickedIndex);
-        beatenPawn && this.updateBeatenPawns(beatenPawn);
+        const beatenPawn = await this.updateBoard(clickedIndex);
+        beatenPawn && (await this.updateBeatenPawns(beatenPawn));
         this.resetPossibilityMoves();
         this.resetClicked();
-        this.checkPlayer();
-        this.changeTurn();
+        await this.checkController();
+        setTimeout(() => {
+          this.matController();
+        }, 0);
+        await this.changeTurn();
+        this.checkController();
         this.isGameOver();
       }
       this.resetClicked();
@@ -827,6 +841,9 @@ class App extends React.Component {
                   player="player1"
                   beatenPawns={player1BeatenPawns}
                 />
+                {this.state.player1Check && (
+                  <CheckAlert className="checkPlayer1" />
+                )}
               </div>
               <Heading />
               <Board
@@ -842,6 +859,10 @@ class App extends React.Component {
                   player="player2"
                   beatenPawns={player2BeatenPawns}
                 />
+
+                {this.state.player2Check && (
+                  <CheckAlert className="checkPlayer2" />
+                )}
               </div>
             </div>
             <ModalLabel

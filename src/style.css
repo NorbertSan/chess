@@ -186,12 +186,31 @@ body.darkMode {
 .player1Board,
 .player2Board {
   font-size: 14px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
 }
 
 .player1Board.active .playerBoard h1::after,
 .player2Board.active .playerBoard h1::after {
   -webkit-transform: scaleX(1) translateX(-50%);
           transform: scaleX(1) translateX(-50%);
+}
+
+.player1Board .check,
+.player2Board .check {
+  font-size: 24px;
+  color: red;
 }
 
 .player1Board .playerBoard,
