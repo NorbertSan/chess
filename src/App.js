@@ -90,7 +90,17 @@ class App extends React.Component {
       darkMode: prevState.darkMode,
       showPossibilityMoves: prevState.showPossibilityMoves,
       player1Check: false,
-      player2Check: false
+      player2Check: false,
+      player1Castling: {
+        kingWasMoved: false,
+        leftRookWasMoved: false,
+        rightRookWasMoved: false
+      },
+      player2Castling: {
+        kingWasMoved: false,
+        leftRookWasMoved: false,
+        rightRookWasMoved: false
+      }
     }));
   }
 
@@ -786,7 +796,79 @@ class App extends React.Component {
       );
     };
 
+    const castlingMove = possibilityMovesArr => {
+      const { turn, board } = this.state;
+      const castlingInfo = this.state[`${turn}Castling`];
+
+      const returnKingPosition = () => {
+        if (turn === "player1") {
+          return 4;
+        } else if (turn === "player2") {
+          return 60;
+        }
+      };
+      const isKingPositionRight = info => {
+        const { kingWasMoved } = info;
+        return kingWasMoved;
+      };
+      const isleftRookPositionRight = info => {
+        if (info.leftRook) return;
+        const { turn, board } = this.state;
+        if (turn === "player1") {
+          if (board[0] === player1PawnsIndexes.rook) return "0";
+          else return false;
+        } else if (turn === "player2") {
+          if (board[63] === player2PawnsIndexes.rook) return 63;
+          else return false;
+        }
+      };
+      const isRightRookPositionRight = info => {
+        if (info.leftRook) return;
+        if (turn === "player1") {
+          if (board[7] === player1PawnsIndexes.rook) return "7";
+          else return false;
+        } else if (turn === "player2") {
+          if (board[56] === player2PawnsIndexes.rook) return 56;
+          else return false;
+        }
+      };
+      const checkIfSquareToPassAreEmpty = position => {
+        const kingPosition = returnKingPosition();
+        let squaresToPass = [];
+        let boolean = true;
+
+        if (position === "left") {
+          squaresToPass = [kingPosition - 1, kingPosition - 2];
+        } else if (position === "right") {
+          squaresToPass = [kingPosition + 1, kingPosition + 2];
+        }
+        squaresToPass.forEach(index => {
+          if (board[index] !== 0) boolean = false;
+        });
+        return boolean;
+      };
+      const ifCheck = () => {
+        return this.state[`${turn}Check`];
+      };
+
+      if (!isKingPositionRight(castlingInfo) && !ifCheck()) {
+        if (
+          isleftRookPositionRight(castlingInfo) &&
+          checkIfSquareToPassAreEmpty("left")
+        ) {
+          console.log(12);
+        }
+        if (
+          isRightRookPositionRight(castlingInfo) &&
+          checkIfSquareToPassAreEmpty("right")
+        ) {
+          console.log(15);
+        }
+      }
+    };
+
     moveKingInEveryDirection(possibilityMoves);
+    castlingMove(possibilityMoves);
     return possibilityMoves;
   }
 

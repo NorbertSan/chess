@@ -5,7 +5,6 @@ import WinnerWhiteIcon from "../../assets/icons/winner-white.svg";
 const WinnerCard = ({ resetGameFunc, winner }) => (
   <>
     <div className="winnerCard">
-      <button className="exitButton" />
       <h1 class="info">Koniec gry</h1>
       <h3>Wygrał {winner}</h3>
       <img
