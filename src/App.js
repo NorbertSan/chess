@@ -86,8 +86,70 @@ class App extends React.Component {
       timePlayer2: 0,
       isSettingsOpen: false,
       darkMode: prevState.darkMode,
-      showPossibilityMoves: prevState.showPossibilityMoves
+      showPossibilityMoves: prevState.showPossibilityMoves,
+      player1Check: false,
+      player2Check: false
     }));
+  }
+
+  checkPlayer() {
+    // CZY JEST SZACH
+    // after every move check all possibilities moves from player moved in that moment
+    // player1 move => player1 all possibilities moves
+    // THIS FUNC IS INVOKED AFTER BOARD UPDATE AND BEFORE CHANGE TURN
+
+    const returnPawnArray = player => {
+      if (turn === "player1") {
+        const allPawnsPlayer1 = [];
+        board.forEach((square, index) => {
+          Object.entries(player1PawnsIndexes).forEach(item => {
+            item[1] === square && allPawnsPlayer1.push([item[0], index]);
+          });
+        });
+        return allPawnsPlayer1;
+      } else if (turn === "player2") {
+        const allPawnsPlayer2 = [];
+        board.forEach((square, index) => {
+          Object.entries(player2PawnsIndexes).forEach(item => {
+            item[1] === square && allPawnsPlayer2.push([item[0], index]);
+          });
+        });
+        return allPawnsPlayer2;
+      }
+    };
+    const getMovesOfSinglePawn = item => {
+      const [pawn, index] = item;
+      return this.possibilityMovesFunc[pawn](index);
+    };
+    const getEnemyKingPosition = () => {
+      if (turn === "player1") {
+        const kingIndex = player2PawnsIndexes.king;
+        return board.findIndex(square => square === kingIndex);
+      } else if (turn === "player2") {
+        const kingIndex = player1PawnsIndexes.king;
+        return board.findIndex(square => square === kingIndex);
+      }
+    };
+    const checkIfKingIsOnEnemyRange = (kingPos, moves) => {
+      return moves.includes(kingPosition);
+    };
+    const setCheckState = boolean => {
+      this.setState({
+        [`${turn}Check`]: boolean
+      });
+    };
+
+    const { turn, board } = this.state;
+    const allMoves = [];
+    const array = returnPawnArray();
+    array.forEach(item => {
+      // allMoves.push(getMovesOfSinglePawn(item));
+      // console.log(getMovesOfSinglePawn(item));
+      allMoves.push(...getMovesOfSinglePawn(item));
+    });
+    const kingPosition = getEnemyKingPosition();
+    const boolean = checkIfKingIsOnEnemyRange(kingPosition, allMoves);
+    setCheckState(boolean);
   }
 
   start() {
@@ -250,7 +312,6 @@ class App extends React.Component {
     this.resetClicked();
 
     if (this.ifClickSamePlaceTwoTimes(clickedIndex)) return;
-    console.log(clickedIndex);
     // IF SOMETHING IS ALREADY CLICKED
     if (this.state.clickedIndex || this.state.clickedIndex === 0) {
       // 1. check out if clicked index is in possibility moves
@@ -262,11 +323,11 @@ class App extends React.Component {
         beatenPawn && this.updateBeatenPawns(beatenPawn);
         this.resetPossibilityMoves();
         this.resetClicked();
+        this.checkPlayer();
         this.changeTurn();
         this.isGameOver();
-      } else {
-        this.resetClicked();
       }
+      this.resetClicked();
       return;
     }
 
