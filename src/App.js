@@ -100,7 +100,8 @@ class App extends React.Component {
         kingWasMoved: false,
         leftRookWasMoved: false,
         rightRookWasMoved: false
-      }
+      },
+      castlingPossibility: []
     }));
   }
 
@@ -340,6 +341,8 @@ class App extends React.Component {
       if (this.isInPossibilityMoves(clickedIndex)) {
         const clickedIndexOld = this.state.clickedIndex;
         this.enPassantController(clickedIndexOld, clickedIndex);
+        this.castlingController(clickedIndexOld, clickedIndex);
+        // this.rookController(clickedIndexOld);
         const beatenPawn = await this.updateBoard(clickedIndex);
         beatenPawn && (await this.updateBeatenPawns(beatenPawn));
         this.resetPossibilityMoves();
@@ -597,6 +600,7 @@ class App extends React.Component {
       this.updateBeatenPawns(board[enPassantPossibility]);
       board[enPassantPossibility] = 0;
     };
+
     if (
       (board[clickedIndexOld] === player1PawnsIndexes.pawn ||
         board[clickedIndexOld] === player2PawnsIndexes.pawn) &&
@@ -609,8 +613,105 @@ class App extends React.Component {
     }
   }
 
-  // put index and array, it will push if can move there or can beat enemy pawn or return false just because this method is used in loop basically(BUT NOT ALWAYS), it help to break it
+  castlingController(clickedIndexOld, index) {
+    // check if you moving the king
+    // check if clicked index is a castling move
+    this.rookController(clickedIndexOld);
+    let { board, castlingPossibility } = this.state;
+    const itsKingMove = () => {
+      return (
+        board[clickedIndexOld] === player1PawnsIndexes.king ||
+        board[clickedIndexOld] === player2PawnsIndexes.king
+      );
+    };
+    const itsCastlingMove = () => {
+      return castlingPossibility.includes(index);
+    };
+
+    if (itsKingMove() && itsCastlingMove()) {
+      // move rook, which rook
+      console.log("22222");
+      if (index === 2) {
+        board[0] = 0;
+        board[index + 1] = player1PawnsIndexes.rook;
+      }
+
+      if (index === 6) {
+        board[7] = 0;
+        board[index - 1] = player1PawnsIndexes.rook;
+      }
+
+      if (index === 58) {
+        board[56] = 0;
+        board[index + 1] = player2PawnsIndexes.rook;
+      }
+
+      if (index === 62) {
+        board[63] = 0;
+        board[index - 1] = player2PawnsIndexes.rook;
+      }
+    } else {
+      // reset state
+      this.setState({
+        castlingPossibility: []
+      });
+    }
+  }
+
+  rookController(clickedIndexOld) {
+    let { board, turn } = this.state;
+
+    const changeRookCastlingState = () => {
+      if (clickedIndexOld === 0) {
+        this.setState(prevState => ({
+          player1Castling: {
+            kingWasMoved: prevState.player1Castling.kingWasMoved,
+            leftRookWasMoved: false,
+            rightRookWasMoved: prevState.player1Castling.rightRookWasMoved
+          }
+        }));
+      }
+
+      if (clickedIndexOld === 7) {
+        this.setState(prevState => ({
+          player1Castling: {
+            kingWasMoved: prevState.player1Castling.kingWasMoved,
+            leftRookWasMoved: prevState.player1Castling.leftRookWasMoved,
+            rightRookWasMoved: false
+          }
+        }));
+      }
+
+      if (clickedIndexOld === 56) {
+        this.setState(prevState => ({
+          player2Castling: {
+            kingWasMoved: prevState.player1Castling.kingWasMoved,
+            leftRookWasMoved: false,
+            rightRookWasMoved: prevState.player1Castling.rightRookWasMoved
+          }
+        }));
+      }
+
+      if (clickedIndexOld === 63) {
+        this.setState(prevState => ({
+          player2Castling: {
+            kingWasMoved: prevState.player1Castling.kingWasMoved,
+            leftRookWasMoved: prevState.player1Castling.leftRookWasMoved,
+            rightRookWasMoved: false
+          }
+        }));
+      }
+    };
+
+    if (
+      board[clickedIndexOld] === player1PawnsIndexes.rook ||
+      board[clickedIndexOld] === player2PawnsIndexes.rook
+    )
+      changeRookCastlingState();
+  }
+
   logicMovement(i, array) {
+    // put index and array, it will push if can move there or can beat enemy pawn or return false just because this method is used in loop basically(BUT NOT ALWAYS), it help to break it
     // its empty => PUSH TO ARRAY
     // its your pawn => break; these function return false then, and in the loop it means break;
     // its enemy pawn => PUSH TO ARRAY AND THEN BREAK;
@@ -832,37 +933,56 @@ class App extends React.Component {
           else return false;
         }
       };
-      const checkIfSquareToPassAreEmpty = position => {
+      const ifLineBetweenRookAndKingIsEmpty = position => {
         const kingPosition = returnKingPosition();
         let squaresToPass = [];
         let boolean = true;
 
         if (position === "left") {
-          squaresToPass = [kingPosition - 1, kingPosition - 2];
+          squaresToPass = [
+            kingPosition - 1,
+            kingPosition - 2,
+            kingPosition - 3
+          ];
         } else if (position === "right") {
           squaresToPass = [kingPosition + 1, kingPosition + 2];
         }
         squaresToPass.forEach(index => {
           if (board[index] !== 0) boolean = false;
         });
+
         return boolean;
       };
-      const ifCheck = () => {
+      const isCheck = () => {
         return this.state[`${turn}Check`];
       };
+      const setCastlingeMove = index => {
+        const castlingMoves = this.state.castlingPossibility;
+        castlingMoves.push(index);
+        this.setState({
+          castlingPossibility: castlingMoves
+        });
+      };
 
-      if (!isKingPositionRight(castlingInfo) && !ifCheck()) {
+      if (!isKingPositionRight(castlingInfo) && !isCheck()) {
         if (
           isleftRookPositionRight(castlingInfo) &&
-          checkIfSquareToPassAreEmpty("left")
+          ifLineBetweenRookAndKingIsEmpty("left")
         ) {
-          console.log(12);
+          // castling is possible to left rook
+          possibilityMovesArr.push(returnKingPosition() - 2);
+          setCastlingeMove(returnKingPosition() - 2);
+          console.log("left");
         }
+
         if (
           isRightRookPositionRight(castlingInfo) &&
-          checkIfSquareToPassAreEmpty("right")
+          ifLineBetweenRookAndKingIsEmpty("right")
         ) {
-          console.log(15);
+          possibilityMovesArr.push(returnKingPosition() + 2);
+          setCastlingeMove(returnKingPosition() + 2);
+          console.log("right");
+          // castling is possible to right rook
         }
       }
     };
