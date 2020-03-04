@@ -17,6 +17,7 @@ import ModalLabel from "./Components/ModalLabel/ModalLabel";
 import SettingsModal from "./Components/SettingsModal/SettingsModal";
 import CheckAlert from "./Components/CheckAlert/CheckAlert";
 import WinnerCard from "./Components/WinnerCard/WinnerCard";
+import PromotionPawnCard from "./Components/PromotionPawnCard/PromotionPawnCard";
 
 class App extends React.Component {
   state = {
@@ -101,9 +102,30 @@ class App extends React.Component {
         leftRookWasMoved: false,
         rightRookWasMoved: false
       },
-      castlingPossibility: []
+      castlingPossibility: [],
+      promotionPawn: {
+        player: null,
+        position: null
+      }
     }));
   }
+
+  handlePromotionPawnOption = e => {
+    let { board, promotionPawn } = this.state;
+    const pawn = e.target;
+    const newPawnIndex = parseInt(pawn.dataset.index);
+    const position = promotionPawn.position;
+    console.log(newPawnIndex, promotionPawn.position);
+    board[position] = newPawnIndex;
+    console.log(board);
+    this.setState({
+      board,
+      promotionPawn: {
+        player: null,
+        position: null
+      }
+    });
+  };
 
   checkController() {
     // CZY JEST SZACH
@@ -148,9 +170,15 @@ class App extends React.Component {
       return moves.includes(kingPosition);
     };
     const setCheckState = boolean => {
-      this.setState({
-        [`${turn}Check`]: boolean
-      });
+      if (turn === "player1") {
+        this.setState({
+          [`player2Check`]: boolean
+        });
+      } else if (turn === "player2") {
+        this.setState({
+          [`player1Check`]: boolean
+        });
+      }
     };
 
     const { turn, board } = this.state;
@@ -342,15 +370,12 @@ class App extends React.Component {
         const clickedIndexOld = this.state.clickedIndex;
         this.enPassantController(clickedIndexOld, clickedIndex);
         this.castlingController(clickedIndexOld, clickedIndex);
-        // this.rookController(clickedIndexOld);
+        this.promotionController(clickedIndexOld, clickedIndex);
         const beatenPawn = await this.updateBoard(clickedIndex);
         beatenPawn && (await this.updateBeatenPawns(beatenPawn));
         this.resetPossibilityMoves();
         this.resetClicked();
         await this.checkController();
-        // setTimeout(() => {
-        //   this.matController();
-        // }, 0);
         await this.changeTurn();
         this.checkController();
         this.isGameOver();
@@ -365,6 +390,36 @@ class App extends React.Component {
       this.setClicked(clickedIndex);
       const possibilityMoves = this.possibilityMovesFunc[pawn](clickedIndex);
       this.setPossibilityMoves(possibilityMoves);
+    }
+  }
+
+  promotionController(clickedIndexOld, clickedIndex) {
+    const { board, turn } = this.state;
+    // check if its pawn && its on first/last row
+    if (
+      turn === "player1" &&
+      clickedIndex >= 56 &&
+      clickedIndex <= 63 &&
+      board[clickedIndexOld] === player1PawnsIndexes.pawn
+    ) {
+      this.setState({
+        promotionPawn: {
+          player: "player1",
+          position: clickedIndex
+        }
+      });
+    } else if (
+      turn === "player2" &&
+      clickedIndex >= 0 &&
+      clickedIndex <= 7 &&
+      board[clickedIndexOld] === player2PawnsIndexes.pawn
+    ) {
+      this.setState({
+        promotionPawn: {
+          player: "player2",
+          position: clickedIndex
+        }
+      });
     }
   }
 
@@ -1031,7 +1086,8 @@ class App extends React.Component {
       isSettingsOpen,
       showPossibilityMoves,
       darkMode,
-      winner
+      winner,
+      promotionPawn
     } = this.state;
     return (
       <>
@@ -1040,10 +1096,24 @@ class App extends React.Component {
         ) : (
           <>
             {winner && (
-              <WinnerCard winner={turn} resetGameFunc={this.handleResetGame} />
+              <WinnerCard
+                winner={winner}
+                resetGameFunc={this.handleResetGame}
+              />
             )}
-            <div className={`appWrapper ${winner && "endGame"}`}>
-              <div className={`player1Board ${turn === "player1" && "active"}`}>
+            {promotionPawn.player && (
+              <PromotionPawnCard
+                handlePromotionPawnOption={this.handlePromotionPawnOption}
+                promotionPawn={promotionPawn}
+              />
+            )}
+            <div
+              className={`appWrapper ${winner &&
+                "disable"} ${promotionPawn.player && "disable"} `}
+            >
+              <div
+                className={`player1Board ${turn === "player1" && "active"} `}
+              >
                 <PlayerBoard
                   timer={timePlayer1}
                   player="player1"
