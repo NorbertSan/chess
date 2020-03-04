@@ -613,10 +613,33 @@ class App extends React.Component {
     }
   }
 
+  kingController(clickedIndexOld) {
+    const { board } = this.state;
+    if (clickedIndexOld === 4)
+      this.setState(prevState => ({
+        player1Castling: {
+          kingWasMoved: true,
+          leftRookWasMoved: prevState.player1Castling.leftRookWasMoved,
+          rightRookWasMoved: prevState.player1Castling.rightRookWasMoved
+        }
+      }));
+
+    if (clickedIndexOld === 60)
+      this.setState(prevState => ({
+        player2Castling: {
+          kingWasMoved: true,
+          leftRookWasMoved: prevState.player1Castling.leftRookWasMoved,
+          rightRookWasMoved: prevState.player1Castling.rightRookWasMoved
+        }
+      }));
+  }
+
   castlingController(clickedIndexOld, index) {
     // check if you moving the king
     // check if clicked index is a castling move
     this.rookController(clickedIndexOld);
+    this.kingController(clickedIndexOld);
+
     let { board, castlingPossibility } = this.state;
     const itsKingMove = () => {
       return (
@@ -659,14 +682,14 @@ class App extends React.Component {
   }
 
   rookController(clickedIndexOld) {
-    let { board, turn } = this.state;
+    const { board } = this.state;
 
     const changeRookCastlingState = () => {
       if (clickedIndexOld === 0) {
         this.setState(prevState => ({
           player1Castling: {
             kingWasMoved: prevState.player1Castling.kingWasMoved,
-            leftRookWasMoved: false,
+            leftRookWasMoved: true,
             rightRookWasMoved: prevState.player1Castling.rightRookWasMoved
           }
         }));
@@ -677,7 +700,7 @@ class App extends React.Component {
           player1Castling: {
             kingWasMoved: prevState.player1Castling.kingWasMoved,
             leftRookWasMoved: prevState.player1Castling.leftRookWasMoved,
-            rightRookWasMoved: false
+            rightRookWasMoved: true
           }
         }));
       }
@@ -686,7 +709,7 @@ class App extends React.Component {
         this.setState(prevState => ({
           player2Castling: {
             kingWasMoved: prevState.player1Castling.kingWasMoved,
-            leftRookWasMoved: false,
+            leftRookWasMoved: true,
             rightRookWasMoved: prevState.player1Castling.rightRookWasMoved
           }
         }));
@@ -697,7 +720,7 @@ class App extends React.Component {
           player2Castling: {
             kingWasMoved: prevState.player1Castling.kingWasMoved,
             leftRookWasMoved: prevState.player1Castling.leftRookWasMoved,
-            rightRookWasMoved: false
+            rightRookWasMoved: true
           }
         }));
       }
@@ -899,7 +922,6 @@ class App extends React.Component {
 
     const castlingMove = possibilityMovesArr => {
       const { turn, board } = this.state;
-      const castlingInfo = this.state[`${turn}Castling`];
 
       const returnKingPosition = () => {
         if (turn === "player1") {
@@ -908,29 +930,23 @@ class App extends React.Component {
           return 60;
         }
       };
-      const isKingPositionRight = info => {
-        const { kingWasMoved } = info;
-        return kingWasMoved;
+      const isKingPositionRight = () => {
+        if (turn === "player1") return !this.state.player1Castling.kingWasMoved;
+        else if (turn === "player2")
+          return !this.state.player2Castling.kingWasMoved;
       };
-      const isleftRookPositionRight = info => {
-        if (info.leftRook) return;
-        const { turn, board } = this.state;
+      const isleftRookPositionRight = () => {
         if (turn === "player1") {
-          if (board[0] === player1PawnsIndexes.rook) return "0";
-          else return false;
+          return !this.state.player1Castling.leftRookWasMoved;
         } else if (turn === "player2") {
-          if (board[63] === player2PawnsIndexes.rook) return 63;
-          else return false;
+          return !this.state.player2Castling.leftRookWasMoved;
         }
       };
       const isRightRookPositionRight = info => {
-        if (info.leftRook) return;
         if (turn === "player1") {
-          if (board[7] === player1PawnsIndexes.rook) return "7";
-          else return false;
+          return !this.state.player1Castling.rightRookWasMoved;
         } else if (turn === "player2") {
-          if (board[56] === player2PawnsIndexes.rook) return 56;
-          else return false;
+          return !this.state.player2Castling.rightRookWasMoved;
         }
       };
       const ifLineBetweenRookAndKingIsEmpty = position => {
@@ -963,26 +979,21 @@ class App extends React.Component {
           castlingPossibility: castlingMoves
         });
       };
-
-      if (!isKingPositionRight(castlingInfo) && !isCheck()) {
+      if (isKingPositionRight() && !isCheck()) {
         if (
-          isleftRookPositionRight(castlingInfo) &&
+          isleftRookPositionRight() &&
           ifLineBetweenRookAndKingIsEmpty("left")
         ) {
           // castling is possible to left rook
           possibilityMovesArr.push(returnKingPosition() - 2);
           setCastlingeMove(returnKingPosition() - 2);
-          console.log("left");
         }
-
         if (
-          isRightRookPositionRight(castlingInfo) &&
+          isRightRookPositionRight() &&
           ifLineBetweenRookAndKingIsEmpty("right")
         ) {
           possibilityMovesArr.push(returnKingPosition() + 2);
           setCastlingeMove(returnKingPosition() + 2);
-          console.log("right");
-          // castling is possible to right rook
         }
       }
     };
