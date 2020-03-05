@@ -11,7 +11,8 @@
 body {
   font-family: "Lobster", sans-serif;
   height: 100vh;
-  background-image: linear-gradient(to top, #d7d2cc 0%, #304352 100%);
+  // background-image: linear-gradient(to top, #d7d2cc 0%, #304352 100%);
+  background: linear-gradient(to right, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.1));
   display: flex;
   justify-content: center;
   align-items: center;
@@ -237,8 +238,8 @@ body {
 .startedCard {
   overflow: hidden;
   padding: 30px;
-  width: 700px;
-  height: 550px;
+  max-width: 700px;
+  height: 80vh;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
@@ -640,6 +641,36 @@ body {
           background-image: url("./assets/icons/knight-white.svg");
         }
       }
+    }
+  }
+}
+
+// MEDIA QUERIES
+
+@media screen and(max-width:767px) {
+  .startedCard {
+    overflow-y: auto;
+    height: 100vh;
+    padding-top: 25px;
+    grid-template-rows: 1fr 3fr 120px;
+    &::after {
+      height: 15%;
+    }
+    &__title {
+      font-size: 2rem;
+    }
+    &__button {
+      padding: 8px 25px;
+      font-size: 12px;
+      margin-bottom: 20px;
+    }
+    &__rules {
+      position: relative;
+      top: 50px;
+    }
+    .ruleDescription {
+      line-height: 2;
+      font-size: 12px;
     }
   }
 }

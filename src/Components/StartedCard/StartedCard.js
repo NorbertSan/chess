@@ -79,7 +79,7 @@ class StartedCard extends React.Component {
               <h3>Podstawowe zasady poruszania się</h3>
               <div className="startedCard__rules__singleRule active">
                 <span className="counter">{`${index + 1}.`}</span>
-                {gameRules[index]}
+                <span class="ruleDescription">{gameRules[index]}</span>
               </div>
             </div>
             <button
