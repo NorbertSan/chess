@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import "./style.css";
 import {
-  player1,
-  player2,
+  player1Name,
+  player2Name,
   player1Pawns,
   player2Pawns,
   player1PawnsIndexes,
@@ -73,7 +73,7 @@ class App extends React.Component {
     const board = this.setBoard();
     this.setState(prevState => ({
       timer,
-      turn: player2,
+      turn: player2Name,
       board,
       player1Pawns,
       player2Pawns,
@@ -135,7 +135,7 @@ class App extends React.Component {
     // I HAVE TO INVOKED THIS FUNC FOR 2 PLAYERS, AFTER EVERY MOVE
 
     const returnPawnArray = () => {
-      if (turn === "player1") {
+      if (turn === player1Name) {
         const allPawnsPlayer1 = [];
         board.forEach((square, index) => {
           Object.entries(player1PawnsIndexes).forEach(item => {
@@ -143,7 +143,7 @@ class App extends React.Component {
           });
         });
         return allPawnsPlayer1;
-      } else if (turn === "player2") {
+      } else if (turn === player2Name) {
         const allPawnsPlayer2 = [];
         board.forEach((square, index) => {
           Object.entries(player2PawnsIndexes).forEach(item => {
@@ -158,10 +158,10 @@ class App extends React.Component {
       return this.possibilityMovesFunc[pawn](index);
     };
     const getEnemyKingPosition = () => {
-      if (turn === "player1") {
+      if (turn === player1Name) {
         const kingIndex = player2PawnsIndexes.king;
         return board.findIndex(square => square === kingIndex);
-      } else if (turn === "player2") {
+      } else if (turn === player2Name) {
         const kingIndex = player1PawnsIndexes.king;
         return board.findIndex(square => square === kingIndex);
       }
@@ -170,11 +170,11 @@ class App extends React.Component {
       return moves.includes(kingPosition);
     };
     const setCheckState = boolean => {
-      if (turn === "player1") {
+      if (turn === player1Name) {
         this.setState({
           [`player2Check`]: boolean
         });
-      } else if (turn === "player2") {
+      } else if (turn === player2Name) {
         this.setState({
           [`player1Check`]: boolean
         });
@@ -192,16 +192,6 @@ class App extends React.Component {
     setCheckState(boolean);
   }
 
-  matController() {
-    // have to check if present player check is true, it means mat
-    let opponent;
-    this.state.turn === "player1"
-      ? (opponent = "player2")
-      : (opponent = "player1");
-    if (this.state[`${this.state.turn}Check`])
-      alert(`mat, ${this.state.turn} lose`);
-  }
-
   start() {
     this.timer();
     const board = this.setBoard();
@@ -216,9 +206,9 @@ class App extends React.Component {
     const board = [];
     let indexes;
     const firstLine = player => {
-      if (player === "player1") {
+      if (player === player1Name) {
         indexes = player1PawnsIndexes;
-      } else if (player === "player2") {
+      } else if (player === player2Name) {
         indexes = player2PawnsIndexes;
       }
       board.push(indexes.rook);
@@ -231,9 +221,9 @@ class App extends React.Component {
       board.push(indexes.rook);
     };
     const secondLine = player => {
-      if (player === "player1") {
+      if (player === player1Name) {
         indexes = player1PawnsIndexes;
-      } else if (player === "player2") {
+      } else if (player === player2Name) {
         indexes = player2PawnsIndexes;
       }
       for (let i = 0; i < 8; i++) {
@@ -245,11 +235,11 @@ class App extends React.Component {
         board.push(freeSpace);
       }
     };
-    firstLine("player1");
-    secondLine("player1");
+    firstLine(player1Name);
+    secondLine(player1Name);
     freePlaces();
-    secondLine("player2");
-    firstLine("player2");
+    secondLine(player2Name);
+    firstLine(player2Name);
     return board;
   }
   resetPossibilityMoves() {
@@ -277,9 +267,9 @@ class App extends React.Component {
     let beatenPawn = false;
     const ifPawnHasBeenBeaten = () => {
       let boolean = false;
-      if (turn === "player1") {
+      if (turn === player1Name) {
         if (board[newIndex] >= 11 && board[newIndex] <= 16) boolean = true;
-      } else if (turn === "player2") {
+      } else if (turn === player2Name) {
         if (board[newIndex] >= 1 && board[newIndex] <= 6) boolean = true;
       }
       return boolean;
@@ -309,9 +299,9 @@ class App extends React.Component {
   changeTurn() {
     const presentPlayer = this.state.turn;
     let nextPlayer;
-    presentPlayer === "player1"
-      ? (nextPlayer = "player2")
-      : (nextPlayer = "player1");
+    presentPlayer === player1Name
+      ? (nextPlayer = player2Name)
+      : (nextPlayer = player1Name);
     this.setState({
       turn: nextPlayer
     });
@@ -319,10 +309,10 @@ class App extends React.Component {
   timer = () => {
     const timer = setInterval(() => {
       let { turn, timePlayer1, timePlayer2 } = this.state;
-      if (turn === "player1") {
+      if (turn === player1Name) {
         timePlayer1++;
         this.setState({ timePlayer1 });
-      } else if (turn === "player2") {
+      } else if (turn === player2Name) {
         timePlayer2++;
         this.setState({ timePlayer2 });
       }
@@ -338,9 +328,9 @@ class App extends React.Component {
     const { turn, board } = this.state;
     const clickedPawn = board[clickedIndex];
     let boolean = false;
-    if (turn === "player1") {
+    if (turn === player1Name) {
       if (clickedPawn >= 1 && clickedPawn <= 6) boolean = true;
-    } else if (turn === "player2") {
+    } else if (turn === player2Name) {
       if (clickedPawn >= 11 && clickedPawn <= 16) boolean = true;
     }
 
@@ -397,26 +387,26 @@ class App extends React.Component {
     const { board, turn } = this.state;
     // check if its pawn && its on first/last row
     if (
-      turn === "player1" &&
+      turn === player1Name &&
       clickedIndex >= 56 &&
       clickedIndex <= 63 &&
       board[clickedIndexOld] === player1PawnsIndexes.pawn
     ) {
       this.setState({
         promotionPawn: {
-          player: "player1",
+          player: player1Name,
           position: clickedIndex
         }
       });
     } else if (
-      turn === "player2" &&
+      turn === player2Name &&
       clickedIndex >= 0 &&
       clickedIndex <= 7 &&
       board[clickedIndexOld] === player2PawnsIndexes.pawn
     ) {
       this.setState({
         promotionPawn: {
-          player: "player2",
+          player: player2Name,
           position: clickedIndex
         }
       });
@@ -447,13 +437,13 @@ class App extends React.Component {
     if (player1BeatenPawns.includes(player2King)) {
       this.setState({
         isGameOver: true,
-        winner: "player1"
+        winner: player1Name
       });
     }
     if (player2BeatenPawns.includes(player1King)) {
       this.setState({
         isGameOver: true,
-        winner: "player2"
+        winner: player2Name
       });
     }
   }
@@ -487,7 +477,6 @@ class App extends React.Component {
     // goniec
     // bishop can move diagonally , this possibilty moves make an X
     let possibilityMoves = [];
-    const { turn } = this.state;
     const diagonallyStartLeftTop = possibilityMovesArr => {
       // go RIGHT BOTTOM from bishop index
       for (let i = index; i < 64; i += 9) {
@@ -536,7 +525,6 @@ class App extends React.Component {
     // skoczek
     // it have 8 possibilities to move, its always 2 place in horizontal/verticale and then 1 place in vertical/horizontal
     let possibilityMoves = [];
-    const { turn } = this.state;
     const moveKnight = possibilityMovesArr => {
       let possibilitiesIndexes = [
         index - 10,
@@ -636,16 +624,16 @@ class App extends React.Component {
   }
   isPoolContainYourPawn(index) {
     const { board, turn } = this.state;
-    if (turn === "player1") {
+    if (turn === player1Name) {
       return board[index] >= 1 && board[index] <= 6;
-    } else if (turn === "player2") {
+    } else if (turn === player2Name) {
       return board[index] >= 11 && board[index] <= 16;
     }
   }
   isEnemyPawnThere(index) {
     const { board, turn } = this.state;
-    if (turn === "player1") return board[index] >= 11 && board[index] <= 16;
-    if (turn === "player2") return board[index] >= 1 && board[index] <= 6;
+    if (turn === player1Name) return board[index] >= 11 && board[index] <= 16;
+    if (turn === player2Name) return board[index] >= 1 && board[index] <= 6;
   }
   enPassantController(clickedIndexOld, index) {
     // bicie w przelocie
@@ -669,7 +657,6 @@ class App extends React.Component {
   }
 
   kingController(clickedIndexOld) {
-    const { board } = this.state;
     if (clickedIndexOld === 4)
       this.setState(prevState => ({
         player1Castling: {
@@ -859,9 +846,9 @@ class App extends React.Component {
         if (placesWherePawnHaveToBe.includes(index)) {
           // if pawn wchich want to beat enemy pawn is on his left / right side
           // check out if pool behind the pawn wchich is going to beat is empty
-          if (turn === "player1")
+          if (turn === player1Name)
             placeWherePawnCanBeat = enPassantPossibility + 8;
-          if (turn === "player2")
+          if (turn === player2Name)
             placeWherePawnCanBeat = enPassantPossibility - 8;
 
           if (this.isPoolEmpty(placeWherePawnCanBeat)) {
@@ -874,17 +861,17 @@ class App extends React.Component {
       }
     };
     const movePawnUp = possibilityMovesArr => {
-      if (turn === "player1") {
+      if (turn === player1Name) {
         if (this.isPoolEmpty(index + 8) && index <= 55)
           possibilityMovesArr.push(index + 8);
       }
-      if (turn === "player2") {
+      if (turn === player2Name) {
         if (this.isPoolEmpty(index - 8) && index >= 8)
           possibilityMovesArr.push(index - 8);
       }
     };
     const firstMove = possibilityMovesArr => {
-      if (turn === "player1") {
+      if (turn === player1Name) {
         // 2nd row
         if (index >= 8 && index <= 15 && this.isPoolEmpty(index + 8)) {
           if (this.isEnemyPawnThere(index + 16)) return; // just because pawn cant beat straight
@@ -892,7 +879,7 @@ class App extends React.Component {
         }
       }
 
-      if (turn === "player2") {
+      if (turn === player2Name) {
         // 6th row
         if (index >= 48 && index <= 55 && this.isPoolEmpty(index - 8)) {
           if (this.isEnemyPawnThere(index - 16)) return;
@@ -901,7 +888,7 @@ class App extends React.Component {
       }
     };
     const beatDiagonally = possibilityMovesArr => {
-      if (turn === "player1") {
+      if (turn === player1Name) {
         if (this.isOnTheEdge("left", index)) {
           this.isPoolContainOpponentPawn(index + 9) &&
             this.logicMovement(index + 9, possibilityMovesArr);
@@ -914,7 +901,7 @@ class App extends React.Component {
           this.isPoolContainOpponentPawn(index + 9) &&
             this.logicMovement(index + 9, possibilityMovesArr);
         }
-      } else if (turn === "player2") {
+      } else if (turn === player2Name) {
         if (this.isOnTheEdge("left", index)) {
           this.isPoolContainOpponentPawn(index - 7) &&
             this.logicMovement(index - 7, possibilityMovesArr);
@@ -979,28 +966,29 @@ class App extends React.Component {
       const { turn, board } = this.state;
 
       const returnKingPosition = () => {
-        if (turn === "player1") {
+        if (turn === player1Name) {
           return 4;
-        } else if (turn === "player2") {
+        } else if (turn === player2Name) {
           return 60;
         }
       };
       const isKingPositionRight = () => {
-        if (turn === "player1") return !this.state.player1Castling.kingWasMoved;
-        else if (turn === "player2")
+        if (turn === player1Name)
+          return !this.state.player1Castling.kingWasMoved;
+        else if (turn === player2Name)
           return !this.state.player2Castling.kingWasMoved;
       };
       const isleftRookPositionRight = () => {
-        if (turn === "player1") {
+        if (turn === player1Name) {
           return !this.state.player1Castling.leftRookWasMoved;
-        } else if (turn === "player2") {
+        } else if (turn === player2Name) {
           return !this.state.player2Castling.leftRookWasMoved;
         }
       };
       const isRightRookPositionRight = info => {
-        if (turn === "player1") {
+        if (turn === player1Name) {
           return !this.state.player1Castling.rightRookWasMoved;
-        } else if (turn === "player2") {
+        } else if (turn === player2Name) {
           return !this.state.player2Castling.rightRookWasMoved;
         }
       };
@@ -1060,9 +1048,9 @@ class App extends React.Component {
 
   isPoolContainOpponentPawn(index) {
     const { board, turn } = this.state;
-    if (turn === "player1") {
+    if (turn === player1Name) {
       return board[index] >= 11 && board[index] <= 16;
-    } else if (turn === "player2") {
+    } else if (turn === player2Name) {
       return board[index] >= 1 && board[index] <= 6;
     }
   }
@@ -1112,11 +1100,11 @@ class App extends React.Component {
                 "disable"} ${promotionPawn.player && "disable"} `}
             >
               <div
-                className={`player1Board ${turn === "player1" && "active"} `}
+                className={`player1Board ${turn === player1Name && "active"} `}
               >
                 <PlayerBoard
                   timer={timePlayer1}
-                  player="player1"
+                  player={player1Name}
                   beatenPawns={player1BeatenPawns}
                 />
                 {this.state.player1Check && (
@@ -1131,10 +1119,12 @@ class App extends React.Component {
                 possibilityMoves={possibilityMoves}
                 clicked={clickedIndex}
               />
-              <div className={`player2Board ${turn === "player2" && "active"}`}>
+              <div
+                className={`player2Board ${turn === player2Name && "active"}`}
+              >
                 <PlayerBoard
                   timer={timePlayer2}
-                  player="player2"
+                  player={player2Name}
                   beatenPawns={player2BeatenPawns}
                 />
 

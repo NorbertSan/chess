@@ -1,5 +1,5 @@
-export const player1 = "player1";
-export const player2 = "player2";
+export const player1Name = "player1";
+export const player2Name = "player2";
 
 export const player1Pawns = {
   king: 1,
