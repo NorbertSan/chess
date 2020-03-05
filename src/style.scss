@@ -149,6 +149,7 @@ body {
   position: fixed;
   left: 50%;
   top: 10px;
+  text-align: center;
   transform: translateX(-50%);
   font-size: 24px;
   h2 {
@@ -234,6 +235,7 @@ body {
   width: 100vw;
   position: relative;
   z-index: 9;
+  overflow: hidden;
 }
 .startedCard {
   overflow: hidden;
@@ -263,7 +265,7 @@ body {
     background: black;
   }
   .arrow {
-    position: absolute;
+    position: fixed;
     top: 50%;
     width: 20px;
     height: 20px;
@@ -647,10 +649,23 @@ body {
 
 // MEDIA QUERIES
 
+@media screen and(max-width:1024px) {
+  .appWrapper {
+    width: 600px;
+    grid-template-columns: 600px;
+    .player1Board,
+    .player2Board {
+      display: none;
+    }
+  }
+}
+
 @media screen and(max-width:767px) {
   .startedCard {
     overflow-y: auto;
+    overflow-x: hidden;
     height: 100vh;
+    // max-width: 100vw;
     padding-top: 25px;
     grid-template-rows: 1fr 3fr 120px;
     &::after {
@@ -670,7 +685,19 @@ body {
     }
     .ruleDescription {
       line-height: 2;
-      font-size: 12px;
+      font-size: 14px;
     }
+  }
+  .heading {
+    font-size: 18px;
+    display: block;
+  }
+}
+
+@media screen and(max-width:640px) {
+  .appWrapper {
+    width: 500px;
+    grid-template-columns: 500px;
+    height: 500px;
   }
 }

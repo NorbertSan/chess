@@ -178,6 +178,7 @@ body.darkMode {
   position: fixed;
   left: 50%;
   top: 10px;
+  text-align: center;
   -webkit-transform: translateX(-50%);
           transform: translateX(-50%);
   font-size: 24px;
@@ -305,6 +306,7 @@ body.darkMode {
   width: 100vw;
   position: relative;
   z-index: 9;
+  overflow: hidden;
 }
 
 .startedCard {
@@ -345,7 +347,7 @@ body.darkMode {
 }
 
 .startedCard .arrow {
-  position: absolute;
+  position: fixed;
   top: 50%;
   width: 20px;
   height: 20px;
@@ -861,9 +863,22 @@ body.darkMode {
   background-image: url("./assets/icons/knight-white.svg");
 }
 
+@media screen and (max-width: 1024px) {
+  .appWrapper {
+    width: 600px;
+    -ms-grid-columns: 600px;
+        grid-template-columns: 600px;
+  }
+  .appWrapper .player1Board,
+  .appWrapper .player2Board {
+    display: none;
+  }
+}
+
 @media screen and (max-width: 767px) {
   .startedCard {
     overflow-y: auto;
+    overflow-x: hidden;
     height: 100vh;
     padding-top: 25px;
     -ms-grid-rows: 1fr 3fr 120px;
@@ -886,7 +901,20 @@ body.darkMode {
   }
   .startedCard .ruleDescription {
     line-height: 2;
-    font-size: 12px;
+    font-size: 14px;
+  }
+  .heading {
+    font-size: 18px;
+    display: block;
+  }
+}
+
+@media screen and (max-width: 640px) {
+  .appWrapper {
+    width: 500px;
+    -ms-grid-columns: 500px;
+        grid-template-columns: 500px;
+    height: 500px;
   }
 }
 /*# sourceMappingURL=style.css.map */
